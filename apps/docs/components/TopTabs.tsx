@@ -1,32 +1,30 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-
-type Tab = { label: string; href: string };
-
-const TABS: Tab[] = [
-  { label: "Guides", href: "/getting-started" },
-  { label: "API Reference", href: "/api/authentication" },
-];
+import config from "@/pepa.config";
 
 export function TopTabs() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const enabledSections = config.sections.filter((s) => s.enabled);
+
   return (
     <div className="top-tabs">
-      {TABS.map((tab) => {
-        // A tab is "current" if the active path falls under its section,
-        // not just on exact match — so any /api/* page keeps the API tab lit.
-        const section = tab.href.split("/")[1];
-        const isActive = pathname.split("/")[1] === section;
+      {enabledSections.map((section) => {
+        const firstSegment = pathname.split("/")[1];
+        // "docs" section owns the root and any path not claimed by another section
+        const isActive =
+          firstSegment === section.id ||
+          (section.id === "docs" &&
+            !enabledSections.some((s) => s.id !== "docs" && firstSegment === s.id));
         return (
           <button
-            key={tab.href}
+            key={section.id}
             aria-current={isActive}
-            onClick={() => router.push(tab.href)}
+            onClick={() => router.push(section.href)}
           >
-            {tab.label}
+            {section.label}
           </button>
         );
       })}

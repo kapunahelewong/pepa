@@ -11,14 +11,8 @@ export type NavGroup = {
   items: NavItem[];
 };
 
-/**
- * Groups docs by their `nav` frontmatter field (e.g. "Guides", "API
- * Reference") and sorts within each group by `order`, then title.
- * This is the entire IA mechanism: the structure on disk + two frontmatter
- * fields, no separate nav-config file to keep in sync by hand.
- */
-export function buildNavTree(): NavGroup[] {
-  const visible = allDocs.filter((doc) => !doc.hidden);
+export function buildNavTree(section = "docs"): NavGroup[] {
+  const visible = allDocs.filter((doc) => !doc.hidden && doc.section === section);
 
   const groups = new Map<string, NavItem[]>();
   for (const doc of visible) {

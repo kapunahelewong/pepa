@@ -15,8 +15,33 @@ const docs = defineCollection({
   schema: (z) => ({
     title: z.string(),
     description: z.string().optional(),
-    // Which left-nav section this page belongs to, e.g. "Guides", "API Reference"
-    nav: z.string().default("Guides"),
+    // Diátaxis content type — drives page-level rendering hints
+    type: z.enum([
+      "tutorial",
+      "how-to",
+      "reference",
+      "explanation",
+      "quickstart",
+      "changelog",
+      "faq",
+      "glossary",
+      "cookbook",
+      "architecture",
+      "migration",
+    ]).optional(),
+    // Top-level tab this page belongs to (maps to pepa.config sections)
+    section: z.enum(["docs", "api-reference", "cookbook", "contributors"]).default("docs"),
+    // Sidebar group label within the section
+    nav: z.enum([
+      "Tutorials",
+      "How-to Guides",
+      "Reference",
+      "Explanation",
+      "Quickstart",
+      "Changelog",
+      "FAQ",
+      "Glossary",
+    ]).default("Tutorials"),
     // Manual ordering within a nav section; lower sorts first
     order: z.number().default(999),
     // Set true to exclude from the sidebar (e.g. landing pages)

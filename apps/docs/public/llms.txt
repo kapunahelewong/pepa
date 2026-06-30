@@ -1,0 +1,7 @@
+# pepa
+
+> Open-source documentation platform built with MDX and Next.js.
+
+## Docs
+- [How to Authenticate](https://example.github.io/pepa/api/authentication): Pass your API key correctly on every request.
+- [Getting Started](https://example.github.io/pepa/getting-started): Install the platform and write your first doc.

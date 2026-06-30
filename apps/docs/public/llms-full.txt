@@ -1,11 +1,6 @@
----
-title: How to Authenticate
-description: Pass your API key correctly on every request.
-type: how-to
-section: docs
-nav: How-to Guides
-order: 1
----
+# How to Authenticate
+
+Pass your API key correctly on every request.
 
 # How to Authenticate
 
@@ -37,3 +32,36 @@ curl https://api.example.com/v1/widgets \
 
 If you receive a 401, double-check that the header value is exactly
 `Bearer <key>` with no extra whitespace.
+
+---
+
+# Getting Started
+
+Install the platform and write your first doc.
+
+import { Callout } from "docs-ui";
+
+# Getting Started
+
+This is a sample page to prove the content pipeline works end to end:
+frontmatter validation, MDX compilation, syntax highlighting, and a custom
+component imported from the shared `docs-ui` package.
+
+<Callout type="tip">
+  Edit this file at `content/docs/getting-started.mdx` — saving it hot-reloads
+  in dev and re-validates against the schema in `content-collections.ts`.
+</Callout>
+
+## Install
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Why the schema matters
+
+If you delete the `title` field above and save, the build fails immediately
+with a clear error pointing at this file — instead of shipping a docs page
+with a blank `<h1>` to production. That's the whole value of a typed content
+layer over parsing MDX by hand.
