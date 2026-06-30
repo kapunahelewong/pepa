@@ -5,9 +5,7 @@ export function generateStaticParams() {
   // This is what makes `output: 'export'` work for a dynamic route: every
   // possible slug has to be known and pre-rendered at build time, since
   // there's no server around afterward to render one on demand.
-  return allDocs
-    .filter((doc) => doc.slug !== "getting-started") // homepage handles this one
-    .map((doc) => ({ slug: doc.slug.split("/") }));
+  return allDocs.map((doc) => ({ slug: doc.slug.split("/") }));
 }
 
 type Params = Promise<{ slug: string[] }>;

@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   },
   // If you deploy to https://<user>.github.io/<repo>/ rather than a custom
   // domain, uncomment and set this to your repo name:
-  // basePath: "/docs-platform",
+  // basePath: "/pepa",
 };
 
 export default withContentCollections(nextConfig);

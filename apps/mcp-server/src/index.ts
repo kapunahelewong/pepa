@@ -56,7 +56,7 @@ async function fetchDoc(siteUrl: string, slug: string): Promise<string | null> {
 }
 
 function buildServer(siteUrl: string): McpServer {
-  const server = new McpServer({ name: "docs-platform", version: "0.1.0" });
+  const server = new McpServer({ name: "pepa", version: "0.1.0" });
 
   server.tool(
     "list_docs",
@@ -92,7 +92,7 @@ export default {
 
     if (url.pathname === "/" && request.method === "GET") {
       return new Response(
-        "docs-platform MCP server. Point an MCP-compatible client at this URL's /mcp endpoint.",
+        "pepa MCP server. Point an MCP-compatible client at this URL's /mcp endpoint.",
         { headers: { "content-type": "text/plain" } }
       );
     }

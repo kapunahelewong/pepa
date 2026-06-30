@@ -1,4 +1,4 @@
-# docs-platform
+# Pepa
 
 An open-source documentation platform: write docs in MDX, get a fast static
 site, full-text search, API reference support, and a connector that lets AI

@@ -2,8 +2,8 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { allDocs } from "../.content-collections/generated/index.js";
 
-const SITE_URL = process.env.SITE_URL ?? "https://example.github.io/docs-platform";
-const SITE_NAME = "docs-platform";
+const SITE_URL = process.env.SITE_URL ?? "https://example.github.io/pepa";
+const SITE_NAME = "pepa";
 
 const docs = allDocs.filter((doc) => !doc.hidden);
 

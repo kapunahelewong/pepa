@@ -6,8 +6,8 @@ import "./globals.css";
 
 export const metadata = {
   title: {
-    default: "docs-platform",
-    template: "%s · docs-platform",
+    default: "pepa",
+    template: "%s · pepa",
   },
   description: "Open-source documentation platform built with MDX and Next.js.",
 };
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             borderBottom: "1px solid var(--border)",
           }}
         >
-          <strong>docs-platform</strong>
+          <strong>pepa</strong>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <SearchBox />
             <ThemeToggle />

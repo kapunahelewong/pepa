@@ -35,7 +35,7 @@ Most MCP clients support a remote Streamable HTTP server by URL. Point yours
 at:
 
 ```
-https://docs-platform-mcp.<your-subdomain>.workers.dev/mcp
+https://pepa-mcp.<your-subdomain>.workers.dev/mcp
 ```
 
 For Claude Desktop / Claude Code, that's typically added as a remote MCP
