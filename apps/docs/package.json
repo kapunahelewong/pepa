@@ -1,0 +1,38 @@
+{
+  "name": "docs",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "collect": "content-collections build",
+    "generate-llms-txt": "tsx scripts/generate-llms-txt.ts",
+    "generate-search-index": "tsx scripts/generate-search-index.ts",
+    "find-replace": "tsx scripts/find-replace.ts",
+    "prebuild": "pnpm collect && pnpm generate-llms-txt && pnpm generate-search-index"
+  },
+  "dependencies": {
+    "@content-collections/core": "^0.7.0",
+    "@content-collections/mdx": "^0.1.5",
+    "@content-collections/next": "^0.2.3",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "rehype-pretty-code": "^0.14.0",
+    "rehype-slug": "^6.0.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "shiki": "^1.22.0",
+    "minisearch": "^7.1.0",
+    "docs-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@content-collections/cli": "^0.1.9",
+    "@types/node": "^22.7.0",
+    "@types/react": "^19.0.0",
+    "glob": "^11.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

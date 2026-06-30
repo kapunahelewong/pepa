@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build docs (catches broken frontmatter / MDX before merge)
+        run: pnpm --filter docs build
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --no-progress 'apps/docs/content/**/*.mdx'
+          fail: true

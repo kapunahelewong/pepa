@@ -1,0 +1,121 @@
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f6f7f8;
+  --fg: #1a1a1a;
+  --fg-muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #3b5bdb;
+  --code-bg: #f6f7f8;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1115;
+  --bg-subtle: #171a21;
+  --fg: #e8e9ec;
+  --fg-muted: #9aa0ab;
+  --border: #2a2e37;
+  --accent: #7c93ff;
+  --code-bg: #171a21;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* Three-column layout: nav left, content center, TOC right.
+   Collapses to a single column under 960px — the nav becomes a
+   top drawer rather than disappearing, since "where am I in the
+   docs" matters more on mobile, not less. */
+.docs-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 220px;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .docs-layout {
+    grid-template-columns: 1fr;
+  }
+  .docs-toc {
+    display: none;
+  }
+}
+
+.docs-sidebar,
+.docs-toc {
+  font-size: 0.875rem;
+}
+
+.docs-sidebar {
+  position: sticky;
+  top: 4rem;
+  align-self: start;
+  max-height: calc(100vh - 5rem);
+  overflow-y: auto;
+}
+
+.docs-toc {
+  position: sticky;
+  top: 4rem;
+  align-self: start;
+  color: var(--fg-muted);
+}
+
+.docs-content {
+  min-width: 0;
+  padding-bottom: 4rem;
+}
+
+.docs-content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.top-tabs {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+}
+
+.top-tabs button {
+  background: none;
+  border: none;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  padding: 0.9rem 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.top-tabs button[aria-current="true"] {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+}
+
+.callout {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  margin: 1.25rem 0;
+}
