@@ -3,6 +3,7 @@ import { compileMDX } from "@content-collections/mdx";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
+import remarkGfm from "remark-gfm";
 
 // Schema is the guardrail for a multi-maintainer project: a doc missing
 // `title` or shipping a typo'd `nav` group fails the build instead of
@@ -51,6 +52,7 @@ const docs = defineCollection({
   }),
   transform: async (doc, context) => {
     const mdx = await compileMDX(context, doc, {
+      remarkPlugins: [remarkGfm],
       rehypePlugins: [
         rehypeSlug, // gives every heading an id, which the TOC needs
         [rehypeAutolinkHeadings, { behavior: "wrap" }],
