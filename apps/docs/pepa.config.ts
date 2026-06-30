@@ -15,17 +15,18 @@ export type PepaConfig = {
   }
 }
 
+// if docset isn't open source, change contributors enabled to false
 const config: PepaConfig = {
   name: "pepa",
   sections: [
     { id: "docs", label: "Docs", href: "/getting-started", enabled: true },
     { id: "api-reference", label: "API Reference", href: "/api-reference", enabled: true },
     { id: "cookbook", label: "Cookbook", href: "/cookbook", enabled: false },
-    { id: "contributors", label: "Contributors", href: "/contributors", enabled: false },
+    { id: "contributors", label: "Contributors", href: "/contributors/overview", enabled: true },
   ],
   features: {
     versioning: false,
-    contributors: false,
+    contributors: true,
   },
 }
 

@@ -1,0 +1,120 @@
+---
+title: Frontmatter Reference
+description: Every frontmatter field, what it does, and when to use it.
+type: reference
+section: contributors
+nav: Reference
+order: 2
+---
+
+# Frontmatter Reference
+
+Every `.mdx` file in `content/docs/` must have a frontmatter block. Fields
+are validated at build time — an invalid or missing required field fails the
+build with a clear error message pointing at the file.
+
+## Required fields
+
+### `title`
+
+```yaml
+title: How to Paginate Results
+```
+
+Shown as the page `<h1>`, in the browser tab, and in search results.
+Do not repeat it as a heading inside the page body.
+
+## Optional fields
+
+### `description`
+
+```yaml
+description: Step-by-step guide to cursor-based pagination in the Widgets API.
+```
+
+One sentence. Shown in gray under the title and used as the meta description
+for search engines.
+
+### `type`
+
+```yaml
+type: how-to
+```
+
+The Diátaxis content type. Drives rendering hints and helps readers know what
+to expect before they start reading.
+
+| Value | When to use |
+|-------|-------------|
+| `tutorial` | Teaching something — reader is learning |
+| `how-to` | Solving a specific problem — reader has a goal |
+| `reference` | Factual lookup — reader knows what they want |
+| `explanation` | Background understanding — reader wants context |
+| `quickstart` | Fastest path to a working result |
+| `changelog` | Release notes |
+| `faq` | Question-and-answer format |
+| `glossary` | Term definitions |
+| `cookbook` | Copy-pasteable recipes, minimal prose |
+| `architecture` | How the system itself is built (contributor-facing) |
+| `migration` | Version upgrade instructions |
+
+### `section`
+
+```yaml
+section: docs
+```
+
+Which top-level tab this page belongs to. Must match a section `id` in
+`pepa.config.ts`.
+
+| Value | Tab |
+|-------|-----|
+| `docs` | Main docs tab (default) |
+| `api-reference` | API Reference tab |
+| `cookbook` | Cookbook tab |
+| `contributors` | Contributors tab |
+
+### `nav`
+
+```yaml
+nav: How-to Guides
+```
+
+The sidebar group label within the section. Valid values:
+
+`Tutorials` · `How-to Guides` · `Reference` · `Explanation` ·
+`Quickstart` · `Changelog` · `FAQ` · `Glossary`
+
+### `order`
+
+```yaml
+order: 3
+```
+
+Integer. Position within the sidebar group — lower numbers sort first.
+Pages with the same `order` sort alphabetically by title.
+
+### `status`
+
+```yaml
+status: beta
+```
+
+Adds a colored badge next to the page title. Omit this field for stable pages —
+stable is the default and gets no badge.
+
+| Value | Badge color | When to use |
+|-------|-------------|-------------|
+| `beta` | Blue | Feature works but the API or content may change |
+| `experimental` | Orange | May change significantly or be removed |
+| `deprecated` | Red | Will be removed; link to the replacement |
+
+### `hidden`
+
+```yaml
+hidden: true
+```
+
+Excludes the page from the sidebar and nav tree. The page still exists at its
+URL and is included in the build — useful for landing pages or pages linked
+from elsewhere but not meant to appear in navigation.

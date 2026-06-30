@@ -1,0 +1,81 @@
+---
+title: Style Linting
+description: How to run the Google Developer Style Guide linter and interpret its output.
+type: how-to
+section: contributors
+nav: How-to Guides
+order: 2
+---
+
+# Style Linting
+
+Pepa uses [Vale](https://vale.sh) with the
+[Google Developer Style Guide](https://developers.google.com/style) ruleset
+to catch common style violations before they reach production.
+
+## First-time setup
+
+```bash
+brew install vale      # install the Vale binary (once per machine)
+pnpm vale:sync         # download the Google style rules (once per machine)
+```
+
+`vale:sync` downloads rules into `.vale/styles/` at the repo root.
+That directory is gitignored — run `vale:sync` once after cloning.
+
+## Running the linter
+
+From the repo root:
+
+```bash
+pnpm lint:style                                              # all docs
+pnpm lint:style apps/docs/content/docs/getting-started.mdx  # single file
+```
+
+## Reading the output
+
+```
+apps/docs/content/docs/getting-started.mdx
+ 14:12  warning  Use 'select' instead of 'click on'.  Google.We
+ 27:4   warning  Avoid using 'simply'.                Google.Simplicity
+```
+
+Each line shows: `line:col  severity  message  rule-name`.
+
+Severity levels (configured in `.vale.ini`):
+
+| Level | Meaning |
+|-------|---------|
+| `suggestion` | Worth considering; low urgency |
+| `warning` | Likely a style issue; fix before merging |
+| `error` | Must fix |
+
+The current config (`MinAlertLevel = suggestion`) shows all levels.
+
+## Common violations
+
+| Vale says | Fix |
+|-----------|-----|
+| "click on" | Use "click" |
+| "simply", "easy", "just" | Remove — they're dismissive |
+| Passive voice detected | Rewrite to active voice |
+| Heading not in sentence case | Capitalize only the first word and proper nouns |
+| Oxford comma missing | Add the comma before "and" in a list |
+| Future tense ("will") | Use present tense where possible |
+
+## Adjusting the rules
+
+The config lives at `.vale.ini` in the repo root. To raise the minimum
+severity to warnings only:
+
+```ini
+MinAlertLevel = warning
+```
+
+To disable a specific rule for a file, add a comment:
+
+```mdx
+<!-- vale Google.Simplicity = NO -->
+This is simply unavoidable.
+<!-- vale Google.Simplicity = YES -->
+```

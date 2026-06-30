@@ -29,6 +29,8 @@ const docs = defineCollection({
       "architecture",
       "migration",
     ]).optional(),
+    // Page lifecycle status — only set when non-stable; absence means stable
+    status: z.enum(["beta", "experimental", "deprecated"]).optional(),
     // Top-level tab this page belongs to (maps to pepa.config sections)
     section: z.enum(["docs", "api-reference", "cookbook", "contributors"]).default("docs"),
     // Sidebar group label within the section

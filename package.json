@@ -8,7 +8,9 @@
     "build": "pnpm --filter docs build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "check-links": "lychee --offline --no-progress 'apps/docs/content/**/*.mdx'"
+    "check-links": "lychee --offline --no-progress 'apps/docs/content/**/*.mdx'",
+    "vale:sync": "vale sync",
+    "lint:style": "vale apps/docs/content/"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

@@ -1,0 +1,58 @@
+---
+title: Contributor Overview
+description: How this documentation platform works and where everything lives.
+type: explanation
+section: contributors
+nav: Reference
+order: 1
+---
+
+# Contributor Overview
+
+This tab is for people maintaining the docs, not for end users of the product.
+It covers the platform's own mechanics: how content is structured, what tools
+are available, and how to use them.
+
+## Repo layout
+
+```
+apps/docs/
+  content/docs/      MDX source files — this is where you write
+  components/        React components (layout, sidebar, TOC, MDX renderer)
+  lib/               nav.ts, vars.ts — shared logic and text variables
+  scripts/           CLI tools: find-replace, search index, llms.txt
+  openapi/           OpenAPI spec source (copied to public/ at build time)
+  pepa.config.ts     Enable/disable top-level nav tabs and features
+  content-collections.ts  Frontmatter schema — build fails on invalid fields
+
+packages/ui/src/
+  Callout.tsx, Tabs.tsx, CodeGroup.tsx, Kbd.tsx, Icon.tsx
+  snippets/          Reusable content blocks (edit once, updates everywhere)
+```
+
+## How the nav is built
+
+There is no nav config file. The sidebar is derived entirely from frontmatter:
+
+- `section` determines which top-level tab the page appears under
+- `nav` determines which sidebar group it belongs to within that tab
+- `order` sets the position within the group
+
+Adding a page to the right place in the nav is just a matter of setting
+the correct `section`, `nav`, and `order` in its frontmatter.
+
+## How builds work
+
+```bash
+pnpm dev     # starts Next.js dev server at localhost:3000
+pnpm build   # full static export into out/
+```
+
+The prebuild step runs automatically before `pnpm build`:
+1. Copies `openapi/` → `public/openapi/` (so the spec is served statically)
+2. Runs content-collections (validates frontmatter, compiles MDX)
+3. Generates `public/search-index.json`
+4. Generates `public/llms.txt` and `public/llms-full.txt` for AI agents
+
+A missing required frontmatter field (like `title`) fails the build
+immediately with a clear error — that's intentional.

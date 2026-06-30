@@ -4,6 +4,10 @@
   "version": "0.1.0",
   "main": "./src/index.tsx",
   "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./snippets": "./src/snippets/index.tsx"
+  },
   "peerDependencies": {
     "react": "^19.0.0"
   },
@@ -14,5 +18,8 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^1.22.0"
   }
 }

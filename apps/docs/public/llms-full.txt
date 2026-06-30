@@ -35,6 +35,464 @@ If you receive a 401, double-check that the header value is exactly
 
 ---
 
+# Components and Symbols
+
+How to use shared UI components, reusable snippets, and text variables in MDX.
+
+# Components and Symbols
+
+## UI components
+
+Import from `docs-ui` in any MDX file:
+
+```mdx
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui"
+```
+
+### Callout
+
+```mdx
+<Callout type="tip">Pro tip: do the thing.</Callout>
+<Callout type="warning">This will overwrite existing data.</Callout>
+```
+
+Types: `tip`, `warning`, `note`, `danger`.
+
+### Tabs and CodeGroup
+
+```mdx
+<Tabs>
+  <Tab label="pnpm">```bash
+pnpm install
+```</Tab>
+  <Tab label="npm">```bash
+npm install
+```</Tab>
+</Tabs>
+```
+
+### Kbd
+
+Inline keyboard shortcut display:
+
+```mdx
+Press <Kbd>⌘K</Kbd> to open search.
+Press <Kbd>Ctrl</Kbd>+<Kbd>C</Kbd> to copy.
+```
+
+### Icon
+
+Pass any [Lucide](https://lucide.dev/icons/) icon component:
+
+```mdx
+import { Icon } from "docs-ui"
+import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react"
+
+<Icon icon={ExternalLink} />
+<Icon icon={AlertTriangle} size={20} />
+```
+
+Default size is 16px. Browse available icons at lucide.dev/icons.
+
+---
+
+## Text variables
+
+Short strings that should be consistent across all docs — product name,
+current version, URLs — live in `apps/docs/lib/vars.ts`:
+
+```ts
+export const vars = {
+  productName: "Pepa",
+  version: "1.0.0",
+  repoUrl: "https://github.com/your-org/pepa",
+}
+```
+
+Use them in MDX:
+
+```mdx
+import { vars } from "@/lib/vars"
+
+**{vars.productName}** version {vars.version} introduced this feature.
+```
+
+To add a variable: add a key to `vars` in `lib/vars.ts`. It's immediately
+available everywhere it's imported.
+
+---
+
+## Content snippets
+
+Snippets are reusable content components — anything from a sentence to a full
+code block — defined in `packages/ui/src/snippets/`. Edit the component once
+and it updates in every doc that uses it.
+
+```mdx
+import { AuthNote, BearerExample } from "docs-ui/snippets"
+
+<AuthNote />
+<BearerExample />
+```
+
+### Adding a snippet
+
+1. Create `packages/ui/src/snippets/MySnippet.tsx`:
+
+```tsx
+export function MySnippet() {
+  return <p>Content that appears identically in every doc that uses it.</p>
+}
+```
+
+2. Export it from `packages/ui/src/snippets/index.tsx`:
+
+```ts
+export { MySnippet } from "./MySnippet"
+```
+
+3. Import and use it in any MDX file:
+
+```mdx
+import { MySnippet } from "docs-ui/snippets"
+<MySnippet />
+```
+
+Snippets can contain anything a React component can: prose, code blocks,
+callouts, tables, other components. Keep them focused — if a snippet grows
+into a full page's worth of content, it should become a real doc instead.
+
+---
+
+# Frontmatter Reference
+
+Every frontmatter field, what it does, and when to use it.
+
+# Frontmatter Reference
+
+Every `.mdx` file in `content/docs/` must have a frontmatter block. Fields
+are validated at build time — an invalid or missing required field fails the
+build with a clear error message pointing at the file.
+
+## Required fields
+
+### `title`
+
+```yaml
+title: How to Paginate Results
+```
+
+Shown as the page `<h1>`, in the browser tab, and in search results.
+Do not repeat it as a heading inside the page body.
+
+## Optional fields
+
+### `description`
+
+```yaml
+description: Step-by-step guide to cursor-based pagination in the Widgets API.
+```
+
+One sentence. Shown in gray under the title and used as the meta description
+for search engines.
+
+### `type`
+
+```yaml
+type: how-to
+```
+
+The Diátaxis content type. Drives rendering hints and helps readers know what
+to expect before they start reading.
+
+| Value | When to use |
+|-------|-------------|
+| `tutorial` | Teaching something — reader is learning |
+| `how-to` | Solving a specific problem — reader has a goal |
+| `reference` | Factual lookup — reader knows what they want |
+| `explanation` | Background understanding — reader wants context |
+| `quickstart` | Fastest path to a working result |
+| `changelog` | Release notes |
+| `faq` | Question-and-answer format |
+| `glossary` | Term definitions |
+| `cookbook` | Copy-pasteable recipes, minimal prose |
+| `architecture` | How the system itself is built (contributor-facing) |
+| `migration` | Version upgrade instructions |
+
+### `section`
+
+```yaml
+section: docs
+```
+
+Which top-level tab this page belongs to. Must match a section `id` in
+`pepa.config.ts`.
+
+| Value | Tab |
+|-------|-----|
+| `docs` | Main docs tab (default) |
+| `api-reference` | API Reference tab |
+| `cookbook` | Cookbook tab |
+| `contributors` | Contributors tab |
+
+### `nav`
+
+```yaml
+nav: How-to Guides
+```
+
+The sidebar group label within the section. Valid values:
+
+`Tutorials` · `How-to Guides` · `Reference` · `Explanation` ·
+`Quickstart` · `Changelog` · `FAQ` · `Glossary`
+
+### `order`
+
+```yaml
+order: 3
+```
+
+Integer. Position within the sidebar group — lower numbers sort first.
+Pages with the same `order` sort alphabetically by title.
+
+### `status`
+
+```yaml
+status: beta
+```
+
+Adds a colored badge next to the page title. Omit this field for stable pages —
+stable is the default and gets no badge.
+
+| Value | Badge color | When to use |
+|-------|-------------|-------------|
+| `beta` | Blue | Feature works but the API or content may change |
+| `experimental` | Orange | May change significantly or be removed |
+| `deprecated` | Red | Will be removed; link to the replacement |
+
+### `hidden`
+
+```yaml
+hidden: true
+```
+
+Excludes the page from the sidebar and nav tree. The page still exists at its
+URL and is included in the build — useful for landing pages or pages linked
+from elsewhere but not meant to appear in navigation.
+
+---
+
+# Contributor Overview
+
+How this documentation platform works and where everything lives.
+
+# Contributor Overview
+
+This tab is for people maintaining the docs, not for end users of the product.
+It covers the platform's own mechanics: how content is structured, what tools
+are available, and how to use them.
+
+## Repo layout
+
+```
+apps/docs/
+  content/docs/      MDX source files — this is where you write
+  components/        React components (layout, sidebar, TOC, MDX renderer)
+  lib/               nav.ts, vars.ts — shared logic and text variables
+  scripts/           CLI tools: find-replace, search index, llms.txt
+  openapi/           OpenAPI spec source (copied to public/ at build time)
+  pepa.config.ts     Enable/disable top-level nav tabs and features
+  content-collections.ts  Frontmatter schema — build fails on invalid fields
+
+packages/ui/src/
+  Callout.tsx, Tabs.tsx, CodeGroup.tsx, Kbd.tsx, Icon.tsx
+  snippets/          Reusable content blocks (edit once, updates everywhere)
+```
+
+## How the nav is built
+
+There is no nav config file. The sidebar is derived entirely from frontmatter:
+
+- `section` determines which top-level tab the page appears under
+- `nav` determines which sidebar group it belongs to within that tab
+- `order` sets the position within the group
+
+Adding a page to the right place in the nav is just a matter of setting
+the correct `section`, `nav`, and `order` in its frontmatter.
+
+## How builds work
+
+```bash
+pnpm dev     # starts Next.js dev server at localhost:3000
+pnpm build   # full static export into out/
+```
+
+The prebuild step runs automatically before `pnpm build`:
+1. Copies `openapi/` → `public/openapi/` (so the spec is served statically)
+2. Runs content-collections (validates frontmatter, compiles MDX)
+3. Generates `public/search-index.json`
+4. Generates `public/llms.txt` and `public/llms-full.txt` for AI agents
+
+A missing required frontmatter field (like `title`) fails the build
+immediately with a clear error — that's intentional.
+
+---
+
+# Style Linting
+
+How to run the Google Developer Style Guide linter and interpret its output.
+
+# Style Linting
+
+Pepa uses [Vale](https://vale.sh) with the
+[Google Developer Style Guide](https://developers.google.com/style) ruleset
+to catch common style violations before they reach production.
+
+## First-time setup
+
+```bash
+brew install vale      # install the Vale binary (once per machine)
+pnpm vale:sync         # download the Google style rules (once per machine)
+```
+
+`vale:sync` downloads rules into `.vale/styles/` at the repo root.
+That directory is gitignored — run `vale:sync` once after cloning.
+
+## Running the linter
+
+From the repo root:
+
+```bash
+pnpm lint:style                                              # all docs
+pnpm lint:style apps/docs/content/docs/getting-started.mdx  # single file
+```
+
+## Reading the output
+
+```
+apps/docs/content/docs/getting-started.mdx
+ 14:12  warning  Use 'select' instead of 'click on'.  Google.We
+ 27:4   warning  Avoid using 'simply'.                Google.Simplicity
+```
+
+Each line shows: `line:col  severity  message  rule-name`.
+
+Severity levels (configured in `.vale.ini`):
+
+| Level | Meaning |
+|-------|---------|
+| `suggestion` | Worth considering; low urgency |
+| `warning` | Likely a style issue; fix before merging |
+| `error` | Must fix |
+
+The current config (`MinAlertLevel = suggestion`) shows all levels.
+
+## Common violations
+
+| Vale says | Fix |
+|-----------|-----|
+| "click on" | Use "click" |
+| "simply", "easy", "just" | Remove — they're dismissive |
+| Passive voice detected | Rewrite to active voice |
+| Heading not in sentence case | Capitalize only the first word and proper nouns |
+| Oxford comma missing | Add the comma before "and" in a list |
+| Future tense ("will") | Use present tense where possible |
+
+## Adjusting the rules
+
+The config lives at `.vale.ini` in the repo root. To raise the minimum
+severity to warnings only:
+
+```ini
+MinAlertLevel = warning
+```
+
+To disable a specific rule for a file, add a comment:
+
+```mdx
+<!-- vale Google.Simplicity = NO -->
+This is simply unavoidable.
+<!-- vale Google.Simplicity = YES -->
+```
+
+---
+
+# Running a Term Sweep
+
+Find and interactively replace a term across all docs in one pass.
+
+# Running a Term Sweep
+
+Use the sweep tool when a term, product name, or phrase needs to be updated
+across multiple docs at once. It shows every match in context and lets you
+decide per-match whether to accept the change.
+
+## Basic usage
+
+From `apps/docs/`:
+
+```bash
+pnpm find-replace "old term" "new term"
+```
+
+This opens an interactive session. For each match you'll see:
+
+```
+content/docs/getting-started.mdx — match 1 of 4
+   3 │
+   4 │ This guide uses old term extensively.
+   5 │
+
+  - This guide uses old term extensively.
+  + This guide uses new term extensively.
+
+Accept? [y]es / [n]o / [a]ll / [q]uit:
+```
+
+## Keys
+
+| Key | Action |
+|-----|--------|
+| `y` | Accept this match, move to the next |
+| `n` | Skip this match, leave it unchanged |
+| `a` | Accept this match and all remaining matches |
+| `q` | Quit immediately, writing only the matches accepted so far |
+
+## Preview without changing anything
+
+```bash
+pnpm find-replace "old term" "new term" --dry-run
+```
+
+Prints every match with context. Writes nothing. Useful for auditing scope
+before committing to a sweep.
+
+## Accept all without reviewing
+
+```bash
+pnpm find-replace "old term" "new term" --write
+```
+
+Accepts every match without prompting. Use this when you're confident the
+substitution is always correct (e.g. a product rename with no ambiguous cases).
+
+## Regex mode
+
+```bash
+pnpm find-replace "v(\d+\.\d+)" "version $1" --regex
+```
+
+Treats the first argument as a JavaScript regex. Capture groups are available
+in the replacement as `$1`, `$2`, etc. Combine with `--write` or `--dry-run`
+as needed.
+
+## Scope
+
+The sweep only touches `.mdx` files under `content/docs/`. It never modifies
+app code, scripts, or configuration files.
+
+---
+
 # Getting Started
 
 Install the platform and write your first doc.

@@ -4,4 +4,9 @@
 
 ## Docs
 - [How to Authenticate](https://example.github.io/pepa/api/authentication): Pass your API key correctly on every request.
+- [Components and Symbols](https://example.github.io/pepa/contributors/components-and-symbols): How to use shared UI components, reusable snippets, and text variables in MDX.
+- [Frontmatter Reference](https://example.github.io/pepa/contributors/frontmatter-reference): Every frontmatter field, what it does, and when to use it.
+- [Contributor Overview](https://example.github.io/pepa/contributors/overview): How this documentation platform works and where everything lives.
+- [Style Linting](https://example.github.io/pepa/contributors/style-linting): How to run the Google Developer Style Guide linter and interpret its output.
+- [Running a Term Sweep](https://example.github.io/pepa/contributors/sweeps): Find and interactively replace a term across all docs in one pass.
 - [Getting Started](https://example.github.io/pepa/getting-started): Install the platform and write your first doc.

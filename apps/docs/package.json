@@ -11,7 +11,9 @@
     "generate-llms-txt": "tsx scripts/generate-llms-txt.ts",
     "generate-search-index": "tsx scripts/generate-search-index.ts",
     "find-replace": "tsx scripts/find-replace.ts",
-    "prebuild": "pnpm collect && pnpm generate-llms-txt && pnpm generate-search-index"
+    "copy-openapi": "node -e \"require('fs').cpSync('openapi', 'public/openapi', { recursive: true })\"",
+    "prebuild": "pnpm copy-openapi && pnpm collect && pnpm generate-llms-txt && pnpm generate-search-index",
+    "predev": "pnpm copy-openapi"
   },
   "dependencies": {
     "@content-collections/core": "^0.7.0",
@@ -19,6 +21,7 @@
     "@content-collections/next": "^0.2.3",
     "@scalar/api-reference": "^1.62.1",
     "docs-ui": "workspace:*",
+    "lucide-react": "^1.22.0",
     "minisearch": "^7.1.0",
     "next": "^15.0.0",
     "react": "^19.0.0",

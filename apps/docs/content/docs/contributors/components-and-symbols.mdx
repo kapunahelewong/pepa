@@ -1,0 +1,131 @@
+---
+title: Components and Symbols
+description: How to use shared UI components, reusable snippets, and text variables in MDX.
+type: reference
+section: contributors
+nav: Reference
+order: 3
+---
+
+# Components and Symbols
+
+## UI components
+
+Import from `docs-ui` in any MDX file:
+
+```mdx
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui"
+```
+
+### Callout
+
+```mdx
+<Callout type="tip">Pro tip: do the thing.</Callout>
+<Callout type="warning">This will overwrite existing data.</Callout>
+```
+
+Types: `tip`, `warning`, `note`, `danger`.
+
+### Tabs and CodeGroup
+
+```mdx
+<Tabs>
+  <Tab label="pnpm">```bash
+pnpm install
+```</Tab>
+  <Tab label="npm">```bash
+npm install
+```</Tab>
+</Tabs>
+```
+
+### Kbd
+
+Inline keyboard shortcut display:
+
+```mdx
+Press <Kbd>⌘K</Kbd> to open search.
+Press <Kbd>Ctrl</Kbd>+<Kbd>C</Kbd> to copy.
+```
+
+### Icon
+
+Pass any [Lucide](https://lucide.dev/icons/) icon component:
+
+```mdx
+import { Icon } from "docs-ui"
+import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react"
+
+<Icon icon={ExternalLink} />
+<Icon icon={AlertTriangle} size={20} />
+```
+
+Default size is 16px. Browse available icons at lucide.dev/icons.
+
+---
+
+## Text variables
+
+Short strings that should be consistent across all docs — product name,
+current version, URLs — live in `apps/docs/lib/vars.ts`:
+
+```ts
+export const vars = {
+  productName: "Pepa",
+  version: "1.0.0",
+  repoUrl: "https://github.com/your-org/pepa",
+}
+```
+
+Use them in MDX:
+
+```mdx
+import { vars } from "@/lib/vars"
+
+**{vars.productName}** version {vars.version} introduced this feature.
+```
+
+To add a variable: add a key to `vars` in `lib/vars.ts`. It's immediately
+available everywhere it's imported.
+
+---
+
+## Content snippets
+
+Snippets are reusable content components — anything from a sentence to a full
+code block — defined in `packages/ui/src/snippets/`. Edit the component once
+and it updates in every doc that uses it.
+
+```mdx
+import { AuthNote, BearerExample } from "docs-ui/snippets"
+
+<AuthNote />
+<BearerExample />
+```
+
+### Adding a snippet
+
+1. Create `packages/ui/src/snippets/MySnippet.tsx`:
+
+```tsx
+export function MySnippet() {
+  return <p>Content that appears identically in every doc that uses it.</p>
+}
+```
+
+2. Export it from `packages/ui/src/snippets/index.tsx`:
+
+```ts
+export { MySnippet } from "./MySnippet"
+```
+
+3. Import and use it in any MDX file:
+
+```mdx
+import { MySnippet } from "docs-ui/snippets"
+<MySnippet />
+```
+
+Snippets can contain anything a React component can: prose, code blocks,
+callouts, tables, other components. Keep them focused — if a snippet grows
+into a full page's worth of content, it should become a real doc instead.

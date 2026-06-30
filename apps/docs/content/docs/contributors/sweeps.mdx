@@ -1,0 +1,78 @@
+---
+title: Running a Term Sweep
+description: Find and interactively replace a term across all docs in one pass.
+type: how-to
+section: contributors
+nav: How-to Guides
+order: 1
+---
+
+# Running a Term Sweep
+
+Use the sweep tool when a term, product name, or phrase needs to be updated
+across multiple docs at once. It shows every match in context and lets you
+decide per-match whether to accept the change.
+
+## Basic usage
+
+From `apps/docs/`:
+
+```bash
+pnpm find-replace "old term" "new term"
+```
+
+This opens an interactive session. For each match you'll see:
+
+```
+content/docs/getting-started.mdx — match 1 of 4
+   3 │
+   4 │ This guide uses old term extensively.
+   5 │
+
+  - This guide uses old term extensively.
+  + This guide uses new term extensively.
+
+Accept? [y]es / [n]o / [a]ll / [q]uit:
+```
+
+## Keys
+
+| Key | Action |
+|-----|--------|
+| `y` | Accept this match, move to the next |
+| `n` | Skip this match, leave it unchanged |
+| `a` | Accept this match and all remaining matches |
+| `q` | Quit immediately, writing only the matches accepted so far |
+
+## Preview without changing anything
+
+```bash
+pnpm find-replace "old term" "new term" --dry-run
+```
+
+Prints every match with context. Writes nothing. Useful for auditing scope
+before committing to a sweep.
+
+## Accept all without reviewing
+
+```bash
+pnpm find-replace "old term" "new term" --write
+```
+
+Accepts every match without prompting. Use this when you're confident the
+substitution is always correct (e.g. a product rename with no ambiguous cases).
+
+## Regex mode
+
+```bash
+pnpm find-replace "v(\d+\.\d+)" "version $1" --regex
+```
+
+Treats the first argument as a JavaScript regex. Capture groups are available
+in the replacement as `$1`, `$2`, etc. Combine with `--write` or `--dry-run`
+as needed.
+
+## Scope
+
+The sweep only touches `.mdx` files under `content/docs/`. It never modifies
+app code, scripts, or configuration files.
