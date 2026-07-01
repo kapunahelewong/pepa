@@ -493,6 +493,257 @@ app code, scripts, or configuration files.
 
 ---
 
+# Authenticate a request
+
+Add a bearer token to every API request.
+
+**Goal:** Make an authenticated request to the Widgets API.
+
+## The code
+
+```bash
+curl https://api.example.com/v1/widgets \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```js
+const res = await fetch("https://api.example.com/v1/widgets", {
+  headers: {
+    Authorization: `Bearer ${process.env.API_KEY}`,
+  },
+});
+const { data } = await res.json();
+```
+
+```python
+import os, httpx
+
+resp = httpx.get(
+    "https://api.example.com/v1/widgets",
+    headers={"Authorization": f"Bearer {os.environ['API_KEY']}"},
+)
+resp.raise_for_status()
+data = resp.json()["data"]
+```
+
+## What to change
+
+- Replace `YOUR_API_KEY` / `process.env.API_KEY` / `os.environ['API_KEY']`
+  with however your app loads secrets.
+- Replace the URL with your real API base URL.
+
+---
+
+# Cookbook
+
+Copy-pasteable recipes for common tasks. Minimal explanation, maximum code.
+
+import { Callout } from "docs-ui"
+
+# Cookbook
+
+Recipes are short, complete, and runnable. Each one solves exactly one problem.
+For background on *why* something works the way it does, see the main docs.
+
+<Callout type="tip">
+  Every recipe uses the Widgets API as the example. Swap in your own endpoints
+  and the patterns transfer directly.
+</Callout>
+
+## What's here
+
+| Recipe | What it covers |
+|--------|---------------|
+| [Authenticate a request](/cookbook/authenticate-a-request) | Add a bearer token to every request |
+| [Paginate through results](/cookbook/paginate-results) | Walk a cursor-paginated list endpoint |
+| [Handle errors](/cookbook/handle-errors) | Branch on status codes, surface error messages |
+
+## How recipes are structured
+
+Each recipe has:
+
+1. **The goal** — one sentence
+2. **The code** — complete, copy-pasteable
+3. **What to change** — the two or three lines you'll need to adapt
+
+Nothing else. If you want context, the main docs have it.
+
+---
+
+# Paginate through results
+
+Walk a cursor-paginated list endpoint until all records are fetched.
+
+**Goal:** Fetch every widget across multiple pages using cursor-based pagination.
+
+## The code
+
+```js
+async function fetchAllWidgets(apiKey) {
+  const widgets = [];
+  let cursor = null;
+
+  do {
+    const url = new URL("https://api.example.com/v1/widgets");
+    url.searchParams.set("limit", "100");
+    if (cursor) url.searchParams.set("cursor", cursor);
+
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const body = await res.json();
+
+    widgets.push(...body.data);
+    cursor = body.next_cursor;
+  } while (cursor);
+
+  return widgets;
+}
+```
+
+```python
+import httpx
+
+def fetch_all_widgets(api_key: str) -> list:
+    widgets, cursor = [], None
+
+    while True:
+        params = {"limit": 100}
+        if cursor:
+            params["cursor"] = cursor
+
+        resp = httpx.get(
+            "https://api.example.com/v1/widgets",
+            headers={"Authorization": f"Bearer {api_key}"},
+            params=params,
+        )
+        resp.raise_for_status()
+        body = resp.json()
+
+        widgets.extend(body["data"])
+        cursor = body.get("next_cursor")
+        if not cursor:
+            break
+
+    return widgets
+```
+
+## What to change
+
+- `limit` — max is 100; lower it if responses are slow or payloads are large.
+- The `next_cursor` field name — check your API's response schema if it differs.
+
+---
+
+# Feature Showcase
+
+A living demo of every component and platform feature. Use this as a reference when authoring.
+
+# Feature Showcase
+
+This page demonstrates every component available to doc authors.
+The `status: beta` badge in the header above is showing off that feature.
+
+No imports needed — all components are globally registered.
+
+---
+
+## Callouts
+
+<Callout type="tip">
+  Use `type="tip"` for helpful hints that aren't critical.
+</Callout>
+
+<Callout type="warning">
+  Use `type="warning"` for things that can go wrong.
+</Callout>
+
+## Tabs
+
+<Tabs>
+  <Tab label="pnpm">
+    ```bash
+    pnpm install && pnpm dev
+    ```
+  </Tab>
+  <Tab label="npm">
+    ```bash
+    npm install && npm run dev
+    ```
+  </Tab>
+  <Tab label="yarn">
+    ```bash
+    yarn && yarn dev
+    ```
+  </Tab>
+</Tabs>
+
+## Syntax-highlighted code
+
+```typescript
+async function fetchWidgets(apiKey: string) {
+  const res = await fetch("https://api.example.com/v1/widgets", {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  return res.json();
+}
+```
+
+## Tables
+
+| Component | MDX tag | What it does |
+|-----------|---------|--------------|
+| Callout | `<Callout type="tip">` | Tips, warnings, notes |
+| Tabs / Tab | `<Tabs><Tab label="...">` | Multi-tab content |
+| CodeGroup | `<CodeGroup>` | Grouped code blocks |
+| Kbd | `<Kbd>⌘K</Kbd>` | Keyboard shortcut styling |
+| Icon | `<Icon icon={...} />` | Inline Lucide icons |
+| Var | `<Var name="productName" />` | Text variable |
+| AuthNote | `<AuthNote />` | Reusable auth reminder snippet |
+
+## Keyboard shortcuts
+
+Press <Kbd>⌘K</Kbd> to open search.
+Press <Kbd>⌘</Kbd>+<Kbd>Shift</Kbd>+<Kbd>P</Kbd> for the command palette.
+
+## Icons
+
+<LucideCircleCheck size={16} /> Success &nbsp;
+<LucideTriangleAlert size={16} /> Warning &nbsp;
+<LucideInfo size={16} /> Info &nbsp;
+<LucideLink size={16} /> Link
+
+Any icon from [lucide.dev/icons](https://lucide.dev/icons) is available as
+`<Lucide{IconName} />` — no import required.
+
+## Text variables
+
+Product name: **<Var name="productName" />** · Version: **<Var name="version" />**
+
+Defined in `lib/vars.ts` — change once, updates everywhere.
+
+## Reusable snippet
+
+`<AuthNote />` is defined once in `packages/ui/src/snippets/AuthNote.tsx`:
+
+<AuthNote />
+
+## Status badges
+
+Add to any page's frontmatter — stable pages get no badge:
+
+```yaml
+status: beta          # blue
+status: experimental  # orange
+status: deprecated    # red
+```
+
+## Heading anchor links
+
+Hover any heading — a chain-link icon appears. Click to copy the direct URL.
+
+---
+
 # Getting Started
 
 Install the platform and write your first doc.

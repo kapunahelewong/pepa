@@ -49,6 +49,38 @@ nav a,
   border-bottom: none;
 }
 
+/* Heading anchors: no underline; show a link icon on hover instead */
+.docs-content :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
+  border-bottom: none;
+}
+
+.docs-content :is(h2, h3, h4, h5, h6) a::after {
+  content: "";
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-left: 0.4em;
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background-color: var(--fg-muted);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.docs-content :is(h2, h3, h4, h5, h6):hover a::after {
+  opacity: 1;
+}
+
+.docs-content h2 {
+    padding-top: 2rem;
+}
+
 /* Three-column layout: nav left, content center, TOC right.
    Collapses to a single column under 960px — the nav becomes a
    top drawer rather than disappearing, since "where am I in the
@@ -73,7 +105,7 @@ nav a,
 
 .docs-sidebar,
 .docs-toc {
-  font-size: 0.875rem;
+  font-size: 1.1rem;
 }
 
 .docs-sidebar {
@@ -94,12 +126,13 @@ nav a,
 .docs-content {
   min-width: 0;
   padding-bottom: 4rem;
+  line-height: 1.5rem;
+  font-size: 1rem;
 }
 
 .docs-content table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
   margin: 1.5rem 0;
 }
 
@@ -146,10 +179,14 @@ nav a,
   background: none;
   border: none;
   color: var(--fg-muted);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   padding: 0.9rem 0;
   border-bottom: 2px solid transparent;
   cursor: pointer;
+}
+
+.top-tabs button:hover {
+  color: #fff;
 }
 
 .top-tabs button[aria-current="true"] {

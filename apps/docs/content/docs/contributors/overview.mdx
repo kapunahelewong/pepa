@@ -7,8 +7,6 @@ nav: Reference
 order: 1
 ---
 
-# Contributor Overview
-
 This tab is for people maintaining the docs, not for end users of the product.
 It covers the platform's own mechanics: how content is structured, what tools
 are available, and how to use them.
@@ -49,6 +47,7 @@ pnpm build   # full static export into out/
 ```
 
 The prebuild step runs automatically before `pnpm build`:
+
 1. Copies `openapi/` → `public/openapi/` (so the spec is served statically)
 2. Runs content-collections (validates frontmatter, compiles MDX)
 3. Generates `public/search-index.json`

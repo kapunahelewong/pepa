@@ -21,7 +21,7 @@ const config: PepaConfig = {
   sections: [
     { id: "docs", label: "Docs", href: "/getting-started", enabled: true },
     { id: "api-reference", label: "API Reference", href: "/api-reference", enabled: true },
-    { id: "cookbook", label: "Cookbook", href: "/cookbook", enabled: false },
+    { id: "cookbook", label: "Cookbook", href: "/cookbook/overview", enabled: true },
     { id: "contributors", label: "Contributors", href: "/contributors/overview", enabled: true },
   ],
   features: {

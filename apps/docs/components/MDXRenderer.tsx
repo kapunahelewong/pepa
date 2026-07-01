@@ -1,13 +1,38 @@
 "use client";
 
 import { useMDXComponent } from "@content-collections/mdx/react";
-import { Callout, Tabs, CodeGroup } from "docs-ui";
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui";
+import { AuthNote, BearerExample } from "docs-ui/snippets";
+import { vars } from "@/lib/vars";
+import * as LucideIcons from "lucide-react";
 
-// Every component an MDX author is allowed to `import { X } from "docs-ui"`
-// and use inline must be registered here too — this is the single place
-// that maps "name used in MDX" to "actual component", which is what makes
-// authoring feel like plain Markdown with superpowers rather than React.
-const components = { Callout, Tabs, CodeGroup };
+// All components registered here are available in MDX without an explicit
+// import statement — authors can just write <Callout> or <AuthNote> directly.
+// This is also where snippets and lucide icons are made available globally.
+
+// Var: renders a text variable by name, e.g. <Var name="productName" />
+function Var({ name }: { name: keyof typeof vars }) {
+  return <>{vars[name]}</>;
+}
+
+const components = {
+  // Core UI
+  Callout,
+  Tabs,
+  Tab,
+  CodeGroup,
+  Kbd,
+  Icon,
+  // Snippets (reusable content blocks)
+  AuthNote,
+  BearerExample,
+  // Text variable accessor
+  Var,
+  // Lucide icons — available as e.g. <LucideExternalLink /> in MDX
+  ...Object.fromEntries(
+    Object.entries(LucideIcons).map(([name, comp]) => [`Lucide${name}`, comp])
+  ),
+};
 
 export function MDXRenderer({ code }: { code: string }) {
   const Component = useMDXComponent(code);

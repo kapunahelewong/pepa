@@ -1,0 +1,36 @@
+---
+title: Cookbook
+description: Copy-pasteable recipes for common tasks. Minimal explanation, maximum code.
+type: cookbook
+section: cookbook
+nav: Reference
+order: 1
+---
+
+import { Callout } from "docs-ui"
+
+Recipes are short, complete, and runnable. Each one solves exactly one problem.
+For background on *why* something works the way it does, see the main docs.
+
+<Callout type="tip">
+  Every recipe uses the Widgets API as the example. Swap in your own endpoints
+  and the patterns transfer directly.
+</Callout>
+
+## What's here
+
+| Recipe | What it covers |
+|--------|---------------|
+| [Authenticate a request](/cookbook/authenticate-a-request) | Add a bearer token to every request |
+| [Paginate through results](/cookbook/paginate-results) | Walk a cursor-paginated list endpoint |
+| [Handle errors](/cookbook/handle-errors) | Branch on status codes, surface error messages |
+
+## How recipes are structured
+
+Each recipe has:
+
+1. **The goal** — one sentence
+2. **The code** — complete, copy-pasteable
+3. **What to change** — the two or three lines you'll need to adapt
+
+Nothing else. If you want context, the main docs have it.

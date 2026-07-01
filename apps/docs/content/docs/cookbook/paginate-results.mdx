@@ -1,0 +1,67 @@
+---
+title: Paginate through results
+description: Walk a cursor-paginated list endpoint until all records are fetched.
+type: cookbook
+section: cookbook
+nav: Reference
+order: 3
+---
+
+**Goal:** Fetch every widget across multiple pages using cursor-based pagination.
+
+## The code
+
+```js
+async function fetchAllWidgets(apiKey) {
+  const widgets = [];
+  let cursor = null;
+
+  do {
+    const url = new URL("https://api.example.com/v1/widgets");
+    url.searchParams.set("limit", "100");
+    if (cursor) url.searchParams.set("cursor", cursor);
+
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const body = await res.json();
+
+    widgets.push(...body.data);
+    cursor = body.next_cursor;
+  } while (cursor);
+
+  return widgets;
+}
+```
+
+```python
+import httpx
+
+def fetch_all_widgets(api_key: str) -> list:
+    widgets, cursor = [], None
+
+    while True:
+        params = {"limit": 100}
+        if cursor:
+            params["cursor"] = cursor
+
+        resp = httpx.get(
+            "https://api.example.com/v1/widgets",
+            headers={"Authorization": f"Bearer {api_key}"},
+            params=params,
+        )
+        resp.raise_for_status()
+        body = resp.json()
+
+        widgets.extend(body["data"])
+        cursor = body.get("next_cursor")
+        if not cursor:
+            break
+
+    return widgets
+```
+
+## What to change
+
+- `limit` — max is 100; lower it if responses are slow or payloads are large.
+- The `next_cursor` field name — check your API's response schema if it differs.

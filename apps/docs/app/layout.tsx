@@ -23,6 +23,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             justifyContent: "space-between",
             padding: "1rem 1.5rem",
             borderBottom: "1px solid var(--border)",
+            fontSize: "2rem"
           }}
         >
           <strong>pepa</strong>
