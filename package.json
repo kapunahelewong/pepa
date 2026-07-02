@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "pnpm --filter docs dev",
     "build": "pnpm --filter docs build",
-    "lint": "pnpm --filter docs lint",
     "typecheck": "pnpm --filter docs typecheck",
     "check-links": "lychee --offline --no-progress 'apps/docs/content/**/*.mdx'",
     "vale:sync": "vale sync",
