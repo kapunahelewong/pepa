@@ -168,8 +168,6 @@ into a full page's worth of content, it should become a real doc instead.
 
 Every frontmatter field, what it does, and when to use it.
 
-# Frontmatter Reference
-
 Every `.mdx` file in `content/docs/` must have a frontmatter block. Fields
 are validated at build time — an invalid or missing required field fails the
 build with a clear error message pointing at the file.
@@ -286,8 +284,6 @@ from elsewhere but not meant to appear in navigation.
 
 How this documentation platform works and where everything lives.
 
-# Contributor Overview
-
 This tab is for people maintaining the docs, not for end users of the product.
 It covers the platform's own mechanics: how content is structured, what tools
 are available, and how to use them.
@@ -328,6 +324,7 @@ pnpm build   # full static export into out/
 ```
 
 The prebuild step runs automatically before `pnpm build`:
+
 1. Copies `openapi/` → `public/openapi/` (so the spec is served statically)
 2. Runs content-collections (validates frontmatter, compiles MDX)
 3. Generates `public/search-index.json`
@@ -341,8 +338,6 @@ immediately with a clear error — that's intentional.
 # Style Linting
 
 How to run the Google Developer Style Guide linter and interpret its output.
-
-# Style Linting
 
 Pepa uses [Vale](https://vale.sh) with the
 [Google Developer Style Guide](https://developers.google.com/style) ruleset
@@ -420,8 +415,6 @@ This is simply unavoidable.
 # Running a Term Sweep
 
 Find and interactively replace a term across all docs in one pass.
-
-# Running a Term Sweep
 
 Use the sweep tool when a term, product name, or phrase needs to be updated
 across multiple docs at once. It shows every match in context and lets you
@@ -540,8 +533,6 @@ Copy-pasteable recipes for common tasks. Minimal explanation, maximum code.
 
 import { Callout } from "docs-ui"
 
-# Cookbook
-
 Recipes are short, complete, and runnable. Each one solves exactly one problem.
 For background on *why* something works the way it does, see the main docs.
 
@@ -638,8 +629,6 @@ def fetch_all_widgets(api_key: str) -> list:
 # Feature Showcase
 
 A living demo of every component and platform feature. Use this as a reference when authoring.
-
-# Feature Showcase
 
 This page demonstrates every component available to doc authors.
 The `status: beta` badge in the header above is showing off that feature.
@@ -738,6 +727,67 @@ status: experimental  # orange
 status: deprecated    # red
 ```
 
+## Steps
+
+Numbered steps with a connecting line. Code blocks, callouts, and any other
+content can live inside a step.
+
+<Steps>
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configure your project">
+    Edit `apps/docs/pepa.config.ts` to set your project name and enable the
+    sections you need.
+  </Step>
+  <Step title="Add your first doc">
+    Create an `.mdx` file under `content/docs/` with the required frontmatter,
+    then run `pnpm dev` to see it appear in the sidebar.
+
+    ```yaml
+    ---
+    title: My First Page
+    nav: Tutorials
+    order: 1
+    ---
+    ```
+  </Step>
+  <Step title="Deploy">
+    Push to `main`. GitHub Actions builds the static export and publishes it
+    to GitHub Pages automatically.
+  </Step>
+</Steps>
+
+## Tiles
+
+Cards arranged in a responsive grid. A single tile expands to fill the full
+width automatically.
+
+<Tiles>
+  <Tile title="Tutorials" iconName="BookOpen" href="/getting-started">
+    Learning-oriented guides that walk you through a first success.
+  </Tile>
+  <Tile title="API Reference" iconName="Code" href="/api-reference">
+    Auto-generated from your OpenAPI spec via Scalar.
+  </Tile>
+  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
+    Copy-pasteable recipes — minimal explanation, maximum code.
+  </Tile>
+  <Tile title="Contributors" iconName="Users" href="/contributors/overview">
+    Platform docs for maintainers: sweeps, style linting, and components.
+  </Tile>
+</Tiles>
+
+A single tile fills the full row:
+
+<Tiles>
+  <Tile title="Single tile" iconName="Zap" href="/getting-started">
+    One tile always expands to the full content width.
+  </Tile>
+</Tiles>
+
 ## Heading anchor links
 
 Hover any heading — a chain-link icon appears. Click to copy the direct URL.
@@ -749,8 +799,6 @@ Hover any heading — a chain-link icon appears. Click to copy the direct URL.
 Install the platform and write your first doc.
 
 import { Callout } from "docs-ui";
-
-# Getting Started
 
 This is a sample page to prove the content pipeline works end to end:
 frontmatter validation, MDX compilation, syntax highlighting, and a custom

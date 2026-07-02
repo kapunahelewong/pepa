@@ -1,7 +1,7 @@
 "use client";
 
 import { useMDXComponent } from "@content-collections/mdx/react";
-import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui";
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon, Steps, Step, Tiles, Tile, Accordion, AccordionItem } from "docs-ui";
 import { AuthNote, BearerExample } from "docs-ui/snippets";
 import { vars } from "@/lib/vars";
 import * as LucideIcons from "lucide-react";
@@ -23,6 +23,12 @@ const components = {
   CodeGroup,
   Kbd,
   Icon,
+  Steps,
+  Step,
+  Tiles,
+  Tile,
+  Accordion,
+  AccordionItem,
   // Snippets (reusable content blocks)
   AuthNote,
   BearerExample,

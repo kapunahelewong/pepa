@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -12,8 +12,9 @@
     "generate-search-index": "tsx scripts/generate-search-index.ts",
     "find-replace": "tsx scripts/find-replace.ts",
     "copy-openapi": "node -e \"require('fs').cpSync('openapi', 'public/openapi', { recursive: true })\"",
-    "prebuild": "pnpm copy-openapi && pnpm collect && pnpm generate-llms-txt && pnpm generate-search-index",
-    "predev": "pnpm copy-openapi"
+    "copy-scalar": "node scripts/copy-scalar-css.mjs",
+    "prebuild": "pnpm copy-openapi && pnpm copy-scalar && pnpm collect && pnpm generate-llms-txt && pnpm generate-search-index",
+    "predev": "pnpm copy-openapi && pnpm copy-scalar"
   },
   "dependencies": {
     "@content-collections/core": "^0.7.0",

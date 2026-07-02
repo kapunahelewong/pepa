@@ -7,14 +7,12 @@ nav: Reference
 order: 3
 ---
 
-# Components and Symbols
-
 ## UI components
 
 Import from `docs-ui` in any MDX file:
 
 ```mdx
-import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui"
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui";
 ```
 
 ### Callout
@@ -28,16 +26,12 @@ Types: `tip`, `warning`, `note`, `danger`.
 
 ### Tabs and CodeGroup
 
-```mdx
+````mdx
 <Tabs>
-  <Tab label="pnpm">```bash
-pnpm install
-```</Tab>
-  <Tab label="npm">```bash
-npm install
-```</Tab>
+  <Tab label="pnpm">```bash pnpm install ```</Tab>
+  <Tab label="npm">```bash npm install ```</Tab>
 </Tabs>
-```
+````
 
 ### Kbd
 
@@ -53,8 +47,8 @@ Press <Kbd>Ctrl</Kbd>+<Kbd>C</Kbd> to copy.
 Pass any [Lucide](https://lucide.dev/icons/) icon component:
 
 ```mdx
-import { Icon } from "docs-ui"
-import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react"
+import { Icon } from "docs-ui";
+import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react";
 
 <Icon icon={ExternalLink} />
 <Icon icon={AlertTriangle} size={20} />
@@ -74,13 +68,13 @@ export const vars = {
   productName: "Pepa",
   version: "1.0.0",
   repoUrl: "https://github.com/your-org/pepa",
-}
+};
 ```
 
 Use them in MDX:
 
 ```mdx
-import { vars } from "@/lib/vars"
+import { vars } from "@/lib/vars";
 
 **{vars.productName}** version {vars.version} introduced this feature.
 ```
@@ -97,7 +91,7 @@ code block — defined in `packages/ui/src/snippets/`. Edit the component once
 and it updates in every doc that uses it.
 
 ```mdx
-import { AuthNote, BearerExample } from "docs-ui/snippets"
+import { AuthNote, BearerExample } from "docs-ui/snippets";
 
 <AuthNote />
 <BearerExample />
@@ -109,14 +103,14 @@ import { AuthNote, BearerExample } from "docs-ui/snippets"
 
 ```tsx
 export function MySnippet() {
-  return <p>Content that appears identically in every doc that uses it.</p>
+  return <p>Content that appears identically in every doc that uses it.</p>;
 }
 ```
 
 2. Export it from `packages/ui/src/snippets/index.tsx`:
 
 ```ts
-export { MySnippet } from "./MySnippet"
+export { MySnippet } from "./MySnippet";
 ```
 
 3. Import and use it in any MDX file:

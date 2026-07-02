@@ -6,24 +6,48 @@ export type NavItem = {
   order: number;
 };
 
+export type NavSubGroup = {
+  label: string;
+  items: NavItem[];
+};
+
 export type NavGroup = {
   label: string;
   items: NavItem[];
+  subgroups: NavSubGroup[];
 };
 
 export function buildNavTree(section = "docs"): NavGroup[] {
   const visible = allDocs.filter((doc) => !doc.hidden && doc.section === section);
 
-  const groups = new Map<string, NavItem[]>();
+  const groupMap = new Map<string, { items: NavItem[]; subMap: Map<string, NavItem[]> }>();
+
   for (const doc of visible) {
-    const group = groups.get(doc.nav) ?? [];
-    group.push({ title: doc.title, slug: doc.slug, order: doc.order });
-    groups.set(doc.nav, group);
+    if (!groupMap.has(doc.nav)) {
+      groupMap.set(doc.nav, { items: [], subMap: new Map() });
+    }
+    const group = groupMap.get(doc.nav)!;
+    const item: NavItem = { title: doc.title, slug: doc.slug, order: doc.order };
+
+    if (doc.navParent) {
+      const sub = group.subMap.get(doc.navParent) ?? [];
+      sub.push(item);
+      group.subMap.set(doc.navParent, sub);
+    } else {
+      group.items.push(item);
+    }
   }
 
-  return Array.from(groups.entries()).map(([label, items]) => ({
+  const sortItems = (items: NavItem[]) =>
+    items.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+
+  return Array.from(groupMap.entries()).map(([label, { items, subMap }]) => ({
     label,
-    items: items.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title)),
+    items: sortItems(items),
+    subgroups: Array.from(subMap.entries()).map(([sublabel, subitems]) => ({
+      label: sublabel,
+      items: sortItems(subitems),
+    })),
   }));
 }
 

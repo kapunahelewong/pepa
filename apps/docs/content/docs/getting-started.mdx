@@ -1,33 +1,321 @@
 ---
 title: Getting Started
-description: Install the platform and write your first doc.
+description: Get Pepa running and publish your first doc in under ten minutes.
 type: tutorial
 section: docs
-nav: Tutorials
+nav: Quickstart
 order: 1
 ---
 
-import { Callout } from "docs-ui";
+**Pepa** is an open-source documentation platform you own completely. Clone it,
+fill it with your content, and ship it — no vendor lock-in, no monthly bill, no
+login required to read your own docs.
 
-This is a sample page to prove the content pipeline works end to end:
-frontmatter validation, MDX compilation, syntax highlighting, and a custom
-component imported from the shared `docs-ui` package.
+This guide walks you through setup from zero to a live site with your first
+custom page.
+
+<Tiles>
+  <Tile title="Write in MDX" iconName="FileText">
+    Markdown plus React components. If you know Markdown, you already know 80%
+    of what you need.
+  </Tile>
+  <Tile title="Nav builds itself" iconName="Layers">
+    No nav config files. The sidebar is generated from your file's frontmatter.
+    Add a file, set three fields, done.
+  </Tile>
+  <Tile title="Deploy anywhere" iconName="Globe">
+    Pepa exports to a folder of static HTML. It runs on GitHub Pages, Netlify,
+    Vercel, S3 — anything that can serve files.
+  </Tile>
+</Tiles>
+
+---
+
+## Before you begin
+
+You'll need three things installed on your machine:
+
+<Accordion>
+  <AccordionItem title="Node.js 20 or later">
+    Check your version with `node --version`. If you need to install or upgrade,
+    download from [nodejs.org](https://nodejs.org) or use a version manager like
+    `nvm` or `fnm`.
+  </AccordionItem>
+  <AccordionItem title="pnpm">
+    Pepa uses pnpm as its package manager. If you have Node installed, you
+    already have `corepack` — just run:
+
+    ```bash
+    corepack enable
+    corepack prepare pnpm@latest --activate
+    ```
+
+    Or install pnpm directly: `npm install -g pnpm`
+  </AccordionItem>
+  <AccordionItem title="Git">
+    Check with `git --version`. Git ships with macOS and most Linux distros.
+    Windows users can get it from [git-scm.com](https://git-scm.com).
+  </AccordionItem>
+</Accordion>
+
+---
+
+## Set up Pepa
+
+<Steps>
+  <Step title="Clone the repository">
+    Replace `my-docs` with whatever you want to call your project:
+
+    ```bash
+    git clone https://github.com/your-org/pepa my-docs
+    cd my-docs
+    ```
+
+    <Callout type="tip">
+      Want to push your docs to your own GitHub repo later? Delete the `.git`
+      folder and run `git init` to start fresh with your own history.
+    </Callout>
+  </Step>
+
+  <Step title="Install dependencies">
+    From inside the `my-docs` folder:
+
+    ```bash
+    pnpm install
+    ```
+
+    This installs everything in one shot — the Next.js app, the shared UI
+    package, and all tooling.
+  </Step>
+
+  <Step title="Start the dev server">
+    ```bash
+    cd apps/docs
+    pnpm dev
+    ```
+
+    Open [localhost:3000](http://localhost:3000). You should see this page.
+    Every change you make to an MDX file hot-reloads in the browser instantly.
+  </Step>
+
+  <Step title="Make it yours">
+    Open `apps/docs/pepa.config.ts`. This is the one file that controls your
+    site's name and which top-level nav tabs are visible:
+
+    ```ts
+    const config: PepaConfig = {
+      name: "my-docs",          // ← change this to your project name
+      sections: [
+        { id: "docs",          label: "Docs",          href: "/getting-started", enabled: true },
+        { id: "api-reference", label: "API Reference", href: "/api-reference",   enabled: false }, // ← enable when ready
+        { id: "cookbook",      label: "Cookbook",      href: "/cookbook/overview", enabled: false },
+      ],
+      // ...
+    }
+    ```
+
+    Save the file. The header updates immediately.
+  </Step>
+
+  <Step title="Write your first doc">
+    Create a new file anywhere under `apps/docs/content/docs/`. The file path
+    becomes the URL. For example:
+
+    ```
+    content/docs/introduction.mdx  →  localhost:3000/introduction
+    content/docs/api/auth.mdx      →  localhost:3000/api/auth
+    ```
+
+    Paste this starter frontmatter and save:
+
+    ```yaml
+    ---
+    title: My First Page
+    description: A short description shown under the title.
+    type: tutorial
+    section: docs
+    nav: Tutorials
+    order: 1
+    ---
+
+    Hello, world! This is my first Pepa page.
+    ```
+
+    Your page appears in the sidebar immediately — no restart needed.
+  </Step>
+</Steps>
+
+---
+
+## How the sidebar works
+
+There is no nav config file. The sidebar is generated entirely from your
+frontmatter fields:
+
+| Field | What it does |
+|-------|-------------|
+| `section` | Which top-level tab this page belongs to (`docs`, `api-reference`, `cookbook`, `contributors`) |
+| `nav` | The sidebar group label within that section (`Tutorials`, `Reference`, `How-to Guides`, etc.) |
+| `order` | Position within the group — lower numbers appear first |
+| `navParent` | Optional sub-section within a group, creates a collapsible nested group |
+| `hidden: true` | Keeps the page out of the sidebar (useful for landing pages) |
+
+A page with `nav: Reference` and `order: 2` will appear as the second item in
+the "Reference" group. That's it — no other config needed.
 
 <Callout type="tip">
-  Edit this file at `content/docs/getting-started.mdx` — saving it hot-reloads
-  in dev and re-validates against the schema in `content-collections.ts`.
+  To create a nested sub-section, add `navParent: "Authentication"` to any
+  page's frontmatter. It groups under a collapsible "Authentication" heading
+  inside whatever `nav` group the page belongs to.
 </Callout>
 
-## Install
+---
 
-```bash
-pnpm install
-pnpm dev
+## How the project is organized
+
+```
+pepa/
+├── apps/
+│   └── docs/
+│       ├── content/docs/      ← Your MDX files live here
+│       ├── app/               ← Next.js App Router pages and layouts
+│       ├── components/        ← Sidebar, TOC, MDX renderer, top tabs
+│       ├── lib/               ← nav.ts (builds the sidebar), vars.ts (text variables)
+│       ├── scripts/           ← CLI tools: search index, find-replace sweep, llms.txt
+│       ├── openapi/           ← Your OpenAPI spec (copied to public/ at build time)
+│       └── pepa.config.ts     ← Site name, enabled sections, feature flags
+│
+└── packages/
+    └── ui/
+        └── src/               ← Shared components: Callout, Tabs, Steps, Tiles, etc.
+            └── snippets/      ← Reusable content blocks (edit once, updates everywhere)
 ```
 
-## Why the schema matters
+The only folder you'll spend most of your time in is `content/docs/`. Everything
+else can stay as-is until you want to customize deeper.
 
-If you delete the `title` field above and save, the build fails immediately
-with a clear error pointing at this file — instead of shipping a docs page
-with a blank `<h1>` to production. That's the whole value of a typed content
-layer over parsing MDX by hand.
+---
+
+## Writing in MDX
+
+MDX is Markdown with superpowers. Everything you already know from Markdown works
+exactly the same — headings, bold, lists, code blocks, links. MDX just lets you
+drop in React components when you need richer content.
+
+<Accordion>
+  <AccordionItem title="What does an MDX file look like?" open>
+    ````mdx
+    ---
+    title: How to Authenticate
+    description: Add bearer token auth to your API requests.
+    type: how-to
+    section: docs
+    nav: How-to Guides
+    order: 1
+    ---
+
+    ## Get your API key
+
+    Go to your dashboard and copy your key.
+
+    <Callout type="warning">
+      Never commit your API key to version control.
+    </Callout>
+
+    ## Make your first request
+
+    ```bash
+    curl https://api.example.com/v1/widgets \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+    ````
+  </AccordionItem>
+  <AccordionItem title="Which components can I use?">
+    All components are globally available — no import statements needed. Just use
+    them directly:
+
+    | Component | What it's for |
+    |-----------|--------------|
+    | `<Callout type="tip">` | Tips, warnings, notes, danger alerts |
+    | `<Steps><Step title="...">` | Numbered step sequences |
+    | `<Tabs><Tab label="...">` | Multi-tab content (great for multi-language code) |
+    | `<Tiles><Tile title="...">` | Card grids for navigation or feature overviews |
+    | `<Accordion><AccordionItem title="...">` | Collapsible sections |
+    | `<Kbd>⌘K</Kbd>` | Keyboard shortcut styling |
+    | `<Var name="productName" />` | Text variables (edit in `lib/vars.ts`) |
+
+    See every component in action on the
+    [Feature Showcase](/contributors/feature-showcase) page.
+  </AccordionItem>
+  <AccordionItem title="What's the difference between all the `type` values?">
+    The `type` field follows the [Diátaxis](https://diataxis.fr) framework — a
+    way of thinking about what kind of content a page is:
+
+    - **tutorial** — Learning-oriented. Teaches by doing. ("Build your first X")
+    - **how-to** — Task-oriented. Solves a specific problem. ("How to do X")
+    - **reference** — Information-oriented. Facts and specs. ("The X field accepts…")
+    - **explanation** — Understanding-oriented. Answers "why". ("Why Pepa works this way")
+
+    You can also use `quickstart`, `cookbook`, `faq`, `glossary`, `changelog`,
+    or `migration` for special content types. The `type` value doesn't change
+    how the page renders — it's there to help you think clearly about what
+    you're writing.
+  </AccordionItem>
+</Accordion>
+
+---
+
+## Build and deploy
+
+When you're ready to publish:
+
+```bash
+pnpm build
+```
+
+This runs the full pipeline: validates all frontmatter, compiles MDX, generates
+the search index, and exports a static site into `apps/docs/out/`. Upload that
+folder to any static host.
+
+<Callout type="note">
+  If you're deploying to GitHub Pages at a path like
+  `https://you.github.io/my-docs/`, uncomment the `basePath` line in
+  `apps/docs/next.config.ts` and set it to `/my-docs`.
+</Callout>
+
+---
+
+## Why the schema is your friend
+
+Every MDX file is validated against a schema before the build runs. If you
+delete a required field or typo a value, the build fails immediately with a clear
+error pointing at the exact file — instead of silently shipping a broken page.
+
+Try it: delete the `title` field at the top of this file and save. Watch the
+terminal. Then add it back.
+
+<Callout type="tip">
+  **You're editing a live example.** This page is at
+  `apps/docs/content/docs/getting-started.mdx`. Saving any change here
+  hot-reloads in the browser and re-validates against the schema. It's a safe
+  place to experiment.
+</Callout>
+
+---
+
+## Where to go next
+
+<Tiles>
+  <Tile title="API Reference" iconName="Code" href="/api-reference">
+    Wire up your OpenAPI spec and get an auto-generated, interactive API explorer.
+  </Tile>
+  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
+    Short, copy-pasteable recipes for common documentation patterns.
+  </Tile>
+  <Tile title="Components & Symbols" iconName="Layers" href="/contributors/components-and-symbols">
+    Full reference for every component, snippet, and text variable available in MDX.
+  </Tile>
+  <Tile title="Feature Showcase" iconName="Sparkles" href="/contributors/feature-showcase">
+    A single page demoing every component side-by-side. Good for copy-pasting.
+  </Tile>
+</Tiles>

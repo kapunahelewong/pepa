@@ -10,3 +10,4 @@ dist/
 .DS_Store
 public/search-index.json
 .vale/styles/
+public/scalar.css

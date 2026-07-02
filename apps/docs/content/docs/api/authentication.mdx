@@ -7,8 +7,6 @@ nav: How-to Guides
 order: 1
 ---
 
-# How to Authenticate
-
 Every request to the Widgets API must include a bearer token in the
 `Authorization` header. This page explains how to obtain a key and attach
 it to your requests. For the full auth scheme spec (scopes, error codes,
@@ -30,10 +28,10 @@ curl https://api.example.com/v1/widgets \
 
 ## Common errors
 
-| Status | Code | Cause |
-|--------|------|-------|
-| 401 | `unauthorized` | Missing or malformed `Authorization` header |
-| 401 | `unauthorized` | Key has been revoked |
+| Status | Code           | Cause                                       |
+| ------ | -------------- | ------------------------------------------- |
+| 401    | `unauthorized` | Missing or malformed `Authorization` header |
+| 401    | `unauthorized` | Key has been revoked                        |
 
 If you receive a 401, double-check that the header value is exactly
 `Bearer <key>` with no extra whitespace.

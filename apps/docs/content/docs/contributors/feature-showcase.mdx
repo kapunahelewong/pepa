@@ -1,0 +1,203 @@
+---
+title: Feature Showcase
+description: A living demo of every component and platform feature. Use this as a reference when authoring.
+section: contributors
+nav: Reference
+order: 10
+status: beta
+---
+
+This page demonstrates every component available to doc authors.
+The `status: beta` badge in the header above is showing off that feature.
+
+No imports needed — all components are globally registered.
+
+---
+
+## Callouts
+
+<Callout type="tip">
+  Use `type="tip"` for helpful hints that aren't critical.
+</Callout>
+
+<Callout type="warning">
+  Use `type="warning"` for things that can go wrong.
+</Callout>
+
+## Tabs
+
+<Tabs>
+  <Tab label="pnpm">```bash pnpm install && pnpm dev ```</Tab>
+  <Tab label="npm">```bash npm install && npm run dev ```</Tab>
+  <Tab label="yarn">```bash yarn && yarn dev ```</Tab>
+</Tabs>
+
+## Syntax-highlighted code
+
+```typescript
+async function fetchWidgets(apiKey: string) {
+  const res = await fetch("https://api.example.com/v1/widgets", {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  return res.json();
+}
+```
+
+## Tables
+
+| Component  | MDX tag                      | What it does                   |
+| ---------- | ---------------------------- | ------------------------------ |
+| Callout    | `<Callout type="tip">`       | Tips, warnings, notes          |
+| Tabs / Tab | `<Tabs><Tab label="...">`    | Multi-tab content              |
+| CodeGroup  | `<CodeGroup>`                | Grouped code blocks            |
+| Kbd        | `<Kbd>⌘K</Kbd>`              | Keyboard shortcut styling      |
+| Icon       | `<Icon icon={...} />`        | Inline Lucide icons            |
+| Var        | `<Var name="productName" />` | Text variable                  |
+| AuthNote   | `<AuthNote />`               | Reusable auth reminder snippet |
+
+## Keyboard shortcuts
+
+Press <Kbd>⌘K</Kbd> to open search.
+Press <Kbd>⌘</Kbd>+<Kbd>Shift</Kbd>+<Kbd>P</Kbd> for the command palette.
+
+## Icons
+
+<LucideCircleCheck size={16} /> Success &nbsp;
+<LucideTriangleAlert size={16} /> Warning &nbsp;
+<LucideInfo size={16} /> Info &nbsp;
+<LucideLink size={16} /> Link
+
+Any icon from [lucide.dev/icons](https://lucide.dev/icons) is available as
+`<Lucide{IconName} />` — no import required.
+
+## Text variables
+
+Product name: **<Var name="productName" />** · Version: **<Var name="version" />**
+
+Defined in `lib/vars.ts` — change once, updates everywhere.
+
+## Reusable snippet
+
+`<AuthNote />` is defined once in `packages/ui/src/snippets/AuthNote.tsx`:
+
+<AuthNote />
+
+## Status badges
+
+Add to any page's frontmatter — stable pages get no badge:
+
+```yaml
+status: beta          # blue
+status: experimental  # orange
+status: deprecated    # red
+```
+
+## Steps
+
+Numbered steps with a connecting line. Code blocks, callouts, and any other
+content can live inside a step.
+
+<Steps>
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configure your project">
+    Edit `apps/docs/pepa.config.ts` to set your project name and enable the
+    sections you need.
+  </Step>
+  <Step title="Add your first doc">
+    Create an `.mdx` file under `content/docs/` with the required frontmatter,
+    then run `pnpm dev` to see it appear in the sidebar.
+
+    ```yaml
+    ---
+    title: My First Page
+    nav: Tutorials
+    order: 1
+    ---
+    ```
+
+  </Step>
+  <Step title="Deploy">
+    Push to `main`. GitHub Actions builds the static export and publishes it
+    to GitHub Pages automatically.
+  </Step>
+</Steps>
+
+## Tiles
+
+Cards arranged in a responsive grid. A single tile expands to fill the full
+width automatically.
+
+<Tiles>
+  <Tile title="Tutorials" iconName="BookOpen" href="/getting-started">
+    Learning-oriented guides that walk you through a first success.
+  </Tile>
+  <Tile title="API Reference" iconName="Code" href="/api-reference">
+    Auto-generated from your OpenAPI spec via Scalar.
+  </Tile>
+  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
+    Copy-pasteable recipes — minimal explanation, maximum code.
+  </Tile>
+  <Tile title="Contributors" iconName="Users" href="/contributors/overview">
+    Platform docs for maintainers: sweeps, style linting, and components.
+  </Tile>
+</Tiles>
+
+A single tile fills the full row:
+
+<Tiles>
+  <Tile title="Single tile" iconName="Zap" href="/getting-started">
+    One tile always expands to the full content width.
+  </Tile>
+</Tiles>
+
+## Accordion
+
+Collapsible sections. Uses native `<details>` — no JavaScript required.
+
+<Accordion>
+  <AccordionItem title="What is Diátaxis?">
+    Diátaxis is a framework that organises documentation into four types:
+    **Tutorials**, **How-to Guides**, **Reference**, and **Explanation**.
+    Each type serves a different user need.
+  </AccordionItem>
+  <AccordionItem title="Do I need to use all four types?" open>
+    No. All four Diátaxis sections (and the special types like Cookbook) are
+    **opt-in**. Set `enabled: false` in `pepa.config.ts` to hide any section
+    you don't need.
+  </AccordionItem>
+  <AccordionItem title="Can I nest pages in the sidebar?">
+    Yes — add a `navParent` field to your frontmatter to group related pages
+    under a collapsible heading within a nav group:
+
+    ```yaml
+    nav: Reference
+    navParent: Authentication
+    ```
+
+  </AccordionItem>
+</Accordion>
+
+## Nested nav sidebar
+
+Pages can be grouped under a collapsible sub-section within any nav group.
+Add `navParent` to the page's frontmatter:
+
+```yaml
+---
+title: Token Types
+nav: Reference
+navParent: Authentication
+order: 1
+---
+```
+
+The sidebar renders the sub-section collapsed by default. It auto-opens when
+the active page lives inside it.
+
+## Heading anchor links
+
+Hover any heading — a chain-link icon appears. Click to copy the direct URL.

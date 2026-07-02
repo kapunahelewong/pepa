@@ -1,11 +1,22 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import config from "@/pepa.config";
 
 export function TopTabs() {
   const pathname = usePathname();
   const router = useRouter();
+
+  // Warm up Turbopack's compilation of @scalar/api-reference in the background
+  // so the first navigation to /api-reference is instant rather than waiting
+  // for on-demand compilation. Runs once, 3 seconds after the app loads.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      import("@scalar/api-reference").catch(() => {});
+    }, 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   const enabledSections = config.sections.filter((s) => s.enabled);
 

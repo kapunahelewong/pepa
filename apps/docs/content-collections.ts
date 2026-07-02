@@ -45,6 +45,8 @@ const docs = defineCollection({
       "FAQ",
       "Glossary",
     ]).default("Tutorials"),
+    // Optional sub-section within the nav group (creates a collapsible group)
+    navParent: z.string().optional(),
     // Manual ordering within a nav section; lower sorts first
     order: z.number().default(999),
     // Set true to exclude from the sidebar (e.g. landing pages)
