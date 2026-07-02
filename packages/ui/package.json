@@ -16,7 +16,6 @@
     "typescript": "^5.6.0"
   },
   "scripts": {
-    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
