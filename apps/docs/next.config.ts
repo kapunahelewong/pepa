@@ -12,7 +12,9 @@ const nextConfig: NextConfig = {
     unoptimized: true, // no image optimization API available on static hosts
   },
   // If you deploy to https://<user>.github.io/<repo>/ rather than a custom
-  // domain, uncomment and set this to your repo name:
+  // domain, uncomment and set this to your repo name. Note that if you
+  // do this during local development it'll break, so you have to toggle it for 
+  // ghpages without a custom domain:
   // basePath: "/pepa",
 };
 

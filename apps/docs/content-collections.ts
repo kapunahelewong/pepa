@@ -77,10 +77,22 @@ const docs = defineCollection({
       return { depth, text, id };
     });
 
+    // Word count: strip code fences, inline code, and JSX/HTML tags so the
+    // count reflects prose rather than code. Reading time uses 200 WPM (average
+    // silent reading speed), but word count is the canonical display metric.
+    const strippedContent = doc.content
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/`[^`]+`/g, "")
+      .replace(/<[^>]+>/g, " ");
+    const wordCount = strippedContent.split(/\s+/).filter((w) => w.length > 0).length;
+    const readingMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
     return {
       ...doc,
       mdx,
       headings,
+      wordCount,
+      readingMinutes,
       // Slug derived from file path, e.g. content/docs/api/auth.mdx -> /api/auth
       slug: doc._meta.path,
     };

@@ -12,10 +12,17 @@ export type PepaConfig = {
   features: {
     versioning: boolean
     contributors: boolean
+    /** Base URL for "Edit this page on GitHub" links. Set to the GitHub blob URL
+     *  of your content/docs directory, e.g.
+     *  "https://github.com/your-org/pepa/blob/main/apps/docs/content/docs"
+     *  Leave undefined to hide the edit link. */
+    editOnGitHub?: string
   }
 }
 
-// if docset isn't open source, change contributors enabled to false
+// If docset isn't open source, change contributors enabled to false.
+// If it is open source and you want to use "Edit on GitHub" update the value for `editOnGitHub`
+// to  your real repo URL. set to `undefined` to hide link entirely.
 const config: PepaConfig = {
   name: "pepa",
   sections: [
@@ -27,6 +34,7 @@ const config: PepaConfig = {
   features: {
     versioning: false,
     contributors: true,
+    editOnGitHub: "https://github.com/your-org/pepa/blob/main/apps/docs/content/docs",
   },
 }
 

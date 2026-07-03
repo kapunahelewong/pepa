@@ -1,0 +1,90 @@
+---
+title: Platform Features
+description: What Pepa adds to every page automatically, and how to configure it.
+type: reference
+section: contributors
+nav: Reference
+order: 3
+---
+
+Pepa adds several UI features to every doc page. Most of them are automatic — they derive their data from
+the frontmatter you're already writing. A few are configured at the platform level in `pepa.config.ts`.
+
+## Breadcrumbs
+
+Every page shows a breadcrumb trail above the title:
+
+```
+Docs / Quickstart
+```
+
+The first segment is the section label (e.g., "Docs", "Cookbook") and links back to the section's
+landing page. The second segment is the `nav` group the page belongs to. These come from the `section`
+and `nav` frontmatter fields — no extra work required.
+
+## Word count and reading time
+
+A metadata line appears between the description and the page body:
+
+```
+1,234 words · 6 min read
+```
+
+Both are computed automatically from the page content:
+
+- **Word count** is derived from the prose text, with code blocks and JSX component tags stripped out.
+  It reflects the amount of content a reader will encounter, not the raw source size.
+- **Reading time** uses 200 words per minute as a baseline. It's shown as a secondary signal — useful
+  for planning, but reading speed varies widely between readers.
+
+Neither field appears in frontmatter. They update automatically as pages are edited.
+
+## Previous and Next navigation
+
+At the bottom of every page, Pepa shows cards linking to the previous and next page in the section:
+
+```
+← Getting Started         API Authentication →
+```
+
+Pages are ordered by nav group (in the order listed in the frontmatter `nav` enum), then by `order`
+within each group, then alphabetically by title. Pages with `hidden: true` are excluded.
+
+The order is the same as the sidebar, so "previous" and "next" always follow the reading path a
+new reader would naturally take.
+
+## Edit on GitHub
+
+A small "Edit this page on GitHub" link appears below the previous/next cards. Clicking it opens
+the source file for the current page on GitHub so readers can suggest corrections.
+
+Configure it in `pepa.config.ts`:
+
+```ts
+features: {
+  editOnGitHub: "https://github.com/your-org/your-repo/blob/main/apps/docs/content/docs",
+}
+```
+
+Set `editOnGitHub` to the URL of the `content/docs` directory on GitHub, using the `blob/<branch>/`
+path (not `tree/`). Pepa appends the page's slug and `.mdx` extension automatically.
+
+To hide the link entirely — for example on a private or internal deployment — set the value to
+`undefined` or remove the field:
+
+```ts
+features: {
+  editOnGitHub: undefined,
+}
+```
+
+## Copy page button
+
+The copy-page button appears in the top-right corner of the content header, but only on pages where
+you've explicitly opted in via frontmatter:
+
+```yaml
+copyable: true
+```
+
+See the [frontmatter reference](/contributors/frontmatter-reference) for details.

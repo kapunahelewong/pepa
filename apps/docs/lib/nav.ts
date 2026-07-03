@@ -55,3 +55,40 @@ export function getDocBySlug(slug: string[]) {
   const path = slug.join("/");
   return allDocs.find((doc) => doc.slug === path);
 }
+
+// Canonical order for nav groups — determines prev/next sequencing across groups.
+const NAV_GROUP_ORDER = [
+  "Quickstart",
+  "Tutorials",
+  "How-to Guides",
+  "Reference",
+  "Explanation",
+  "Changelog",
+  "FAQ",
+  "Glossary",
+];
+
+export type AdjacentDoc = { title: string; slug: string } | null;
+
+export function getAdjacentDocs(
+  currentSlug: string,
+  section: string
+): { prev: AdjacentDoc; next: AdjacentDoc } {
+  const visible = allDocs
+    .filter((d) => !d.hidden && d.section === section)
+    .sort((a, b) => {
+      const ai = NAV_GROUP_ORDER.indexOf(a.nav);
+      const bi = NAV_GROUP_ORDER.indexOf(b.nav);
+      if (ai !== bi) return ai - bi;
+      if (a.order !== b.order) return a.order - b.order;
+      return a.title.localeCompare(b.title);
+    });
+
+  const idx = visible.findIndex((d) => d.slug === currentSlug);
+  if (idx === -1) return { prev: null, next: null };
+
+  return {
+    prev: idx > 0 ? { title: visible[idx - 1].title, slug: visible[idx - 1].slug } : null,
+    next: idx < visible.length - 1 ? { title: visible[idx + 1].title, slug: visible[idx + 1].slug } : null,
+  };
+}

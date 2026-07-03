@@ -42,8 +42,9 @@ the correct `section`, `nav`, and `order` in its frontmatter.
 ## How builds work
 
 ```bash
-pnpm dev     # starts Next.js dev server at localhost:3000
-pnpm build   # full static export into out/
+pnpm dev      # starts Next.js dev server at localhost:3000
+pnpm validate # check everything without building (see below)
+pnpm build    # full static export into out/
 ```
 
 The prebuild step runs automatically before `pnpm build`:
@@ -55,3 +56,32 @@ The prebuild step runs automatically before `pnpm build`:
 
 A missing required frontmatter field (like `title`) fails the build
 immediately with a clear error — that's intentional.
+
+## Validating without building
+
+`pnpm validate` runs three fast checks and exits with a clear pass/fail:
+
+```bash
+✓ Frontmatter & MDX    (356ms)  — schema errors, MDX parse failures
+✓ TypeScript           (2s)     — type errors across the whole app
+✓ Internal links       (0 broken) — /slug links that don't point to a real page
+```
+
+Run it before opening a PR. CI runs it automatically on every push and pull
+request. If a check fails, the output tells you the file and line number:
+
+```
+✗ Internal links     (1 broken)
+
+  content/docs/cookbook/overview.mdx
+    line 26  →  /cookbook/handle-errors  (no matching page)
+```
+
+External links (http/https URLs) are checked separately by
+[lychee](https://lychee.cli.rs) in CI after the build step.
+
+## What the platform adds to every page
+
+Breadcrumbs, word count, previous/next navigation, and the "Edit on GitHub" link are all generated
+automatically — no frontmatter required. See [Platform Features](/contributors/platform-features)
+for how each one works and how to configure them.

@@ -4,6 +4,7 @@ import { useMDXComponent } from "@content-collections/mdx/react";
 import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon, Steps, Step, Tiles, Tile, Accordion, AccordionItem } from "docs-ui";
 import { AuthNote, BearerExample } from "docs-ui/snippets";
 import { vars } from "@/lib/vars";
+import { PreWithCopy } from "@/components/PreWithCopy";
 import * as LucideIcons from "lucide-react";
 
 // All components registered here are available in MDX without an explicit
@@ -16,6 +17,8 @@ function Var({ name }: { name: keyof typeof vars }) {
 }
 
 const components = {
+  // Override pre to add a copy button to every code block
+  pre: PreWithCopy,
   // Core UI
   Callout,
   Tabs,
