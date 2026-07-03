@@ -1,0 +1,138 @@
+---
+title: Setting Up the API Reference
+description: How to connect your own OpenAPI spec and configure the interactive API explorer.
+type: how-to
+section: contributors
+nav: How-to Guides
+order: 1
+---
+
+The API Reference tab is powered by [Scalar](https://scalar.com), an open-source
+interactive API explorer. Pepa ships with a placeholder OpenAPI spec so the tab
+has something to display from day one. This guide explains how to swap it out
+for your own.
+
+---
+
+## How it works
+
+The pipeline has three parts:
+
+<Steps>
+  <Step title="Your spec lives in openapi/">
+    Any `.yaml` or `.json` file you place in `apps/docs/openapi/` is your source
+    of truth.
+  </Step>
+  <Step title="It gets copied to public/ at build time">
+    The `copy-openapi` script (run automatically before `pnpm dev` and
+    `pnpm build`) copies everything in `openapi/` to `public/openapi/`, where
+    Next.js serves it as a static file.
+  </Step>
+  <Step title="Scalar loads it at runtime">
+    The API reference page points Scalar at the served file. Scalar fetches it
+    in the browser and renders the interactive explorer — no server required.
+  </Step>
+</Steps>
+
+---
+
+## Swap in your own spec
+
+<Steps>
+  <Step title="Add your spec file">
+    Copy your OpenAPI 3.x spec into `apps/docs/openapi/`. The filename is up to
+    you:
+
+    ```
+    apps/docs/openapi/
+    ├── example-api.yaml   ← placeholder (can delete this)
+    └── your-api.yaml      ← your real spec
+    ```
+
+    <Callout type="tip">
+      Both OpenAPI 3.0 and 3.1 work. JSON is also accepted alongside YAML.
+    </Callout>
+  </Step>
+
+  <Step title="Point Scalar at your file">
+    Open `apps/docs/app/api-reference/page.tsx` and update the `url` field:
+
+    ```ts
+    const instance = createApiReference(el, {
+      url: "/openapi/your-api.yaml",   // ← change this
+      darkMode: document.documentElement.dataset.theme === "dark",
+    });
+    ```
+  </Step>
+
+  <Step title="Remove the placeholder (optional)">
+    Delete `apps/docs/openapi/example-api.yaml` once your spec is wired up.
+    It's only there to give the tab something to render on a fresh clone.
+  </Step>
+
+  <Step title="Restart the dev server">
+    ```bash
+    pnpm dev
+    ```
+
+    The `predev` step runs `copy-openapi` automatically, so your spec is copied
+    to `public/openapi/` before the server starts. Navigate to the API Reference
+    tab to confirm Scalar is loading your spec.
+  </Step>
+</Steps>
+
+---
+
+## Disable the tab entirely
+
+If your project doesn't have an API, turn the tab off in `pepa.config.ts`:
+
+```ts
+{ id: "api-reference", label: "API Reference", href: "/api-reference", enabled: false },
+```
+
+The tab disappears from the header. The route still exists but won't appear in
+navigation or the search index.
+
+---
+
+## Multiple specs
+
+If you have more than one API (for example, a public API and an internal one),
+you can drop multiple files into `openapi/` and switch between them:
+
+```
+apps/docs/openapi/
+├── public-api.yaml
+└── internal-api.yaml
+```
+
+Point Scalar at whichever one you want as the default in `page.tsx`. To let
+readers switch between specs, you'd need to extend the page component to render
+a selector — this isn't built in yet, but the files are all served statically so
+client-side switching is straightforward to add.
+
+---
+
+## Common issues
+
+<Accordion>
+  <AccordionItem title="The explorer shows 'Failed to fetch' or a network error">
+    The spec file isn't being served. Check that:
+
+    1. Your file is in `apps/docs/openapi/` (not `apps/docs/public/openapi/` directly)
+    2. You restarted the dev server after adding the file (so `predev` ran `copy-openapi`)
+    3. The filename in `page.tsx` matches the actual filename exactly, including extension
+  </AccordionItem>
+  <AccordionItem title="Scalar loads but my spec has validation errors">
+    Scalar renders even with spec errors, but some operations may not display
+    correctly. Run your spec through the
+    [Swagger Editor](https://editor.swagger.io) or the Scalar validator to catch
+    issues before publishing.
+  </AccordionItem>
+  <AccordionItem title="The API Reference tab is slow on first load">
+    This is expected in dev — Turbopack compiles Scalar's JavaScript module on
+    first visit (~5 seconds). After that first compile it's cached for the rest
+    of the dev session. Production builds are pre-compiled and load instantly.
+  </AccordionItem>
+</Accordion>

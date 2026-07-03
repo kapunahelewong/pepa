@@ -1,15 +1,13 @@
 openapi: 3.1.0
 info:
-  title: Widgets API
+  title: Example API
   version: "1.0.0"
   description: |
-    A small fictional API for managing widgets, used as a working example
-    for the API Reference section of docs-platform. Swap this file out for
-    your real spec once the reference renderer is wired up — everything
-    downstream (page generation, nav, search indexing) should keep working
-    unchanged as long as the new spec is also valid OpenAPI 3.1.
+    This is a placeholder OpenAPI spec included with Pepa so the API Reference
+    tab has something to display out of the box. Replace this file with your
+    own spec — see the Contributors section for step-by-step instructions.
   contact:
-    name: docs-platform
+    name: your-project
 servers:
   - url: https://api.example.com/v1
     description: Production
