@@ -107,6 +107,25 @@ stable is the default and gets no badge.
 | `experimental` | Orange | May change significantly or be removed |
 | `deprecated` | Red | Will be removed; link to the replacement |
 
+### `navParent`
+
+```yaml
+navParent: Authentication
+```
+
+Creates a collapsible sub-section within the sidebar group. All pages that share
+the same `nav` and `navParent` values are grouped under a twirl-open heading.
+The sub-section opens automatically when the reader is on one of its pages.
+
+```yaml
+# Example: two pages nested under "Authentication" inside the Reference group
+nav: Reference
+navParent: Authentication
+```
+
+Omit this field to have the page appear directly in the top level of its `nav`
+group with no nesting.
+
 ### `hidden`
 
 ```yaml
@@ -116,3 +135,24 @@ hidden: true
 Excludes the page from the sidebar and nav tree. The page still exists at its
 URL and is included in the build — useful for landing pages or pages linked
 from elsewhere but not meant to appear in navigation.
+
+### `copyable`
+
+```yaml
+copyable: true
+```
+
+Shows a **Copy page** button in the top-right corner of the content header.
+Clicking it copies the full rendered text of the page to the clipboard — useful
+for readers who want to paste the content into an AI assistant, a notes app, or
+another document.
+
+The button is off by default. Add `copyable: true` to any page where sharing
+the full content in one click would be genuinely useful — long reference pages,
+tutorials, and cookbook recipes are good candidates. Avoid it on pages that are
+mostly navigation or placeholder content.
+
+<Callout type="tip">
+  The copy captures the rendered text (what readers see), not the raw MDX
+  source. Code blocks, table content, and component output are all included.
+</Callout>

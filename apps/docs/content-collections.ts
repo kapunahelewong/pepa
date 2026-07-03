@@ -51,6 +51,8 @@ const docs = defineCollection({
     order: z.number().default(999),
     // Set true to exclude from the sidebar (e.g. landing pages)
     hidden: z.boolean().default(false),
+    // Set true to show a "Copy page" button at the top of the content
+    copyable: z.boolean().default(false),
   }),
   transform: async (doc, context) => {
     const mdx = await compileMDX(context, doc, {

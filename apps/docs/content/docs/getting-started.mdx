@@ -4,6 +4,7 @@ description: Get Pepa running and publish your first doc in under ten minutes.
 type: tutorial
 section: docs
 nav: Quickstart
+copyable: true
 order: 1
 ---
 
@@ -51,6 +52,7 @@ You'll need three things installed on your machine:
     ```
 
     Or install pnpm directly: `npm install -g pnpm`
+
   </AccordionItem>
   <AccordionItem title="Git">
     Check with `git --version`. Git ships with macOS and most Linux distros.
@@ -75,6 +77,7 @@ You'll need three things installed on your machine:
       Want to push your docs to your own GitHub repo later? Delete the `.git`
       folder and run `git init` to start fresh with your own history.
     </Callout>
+
   </Step>
 
   <Step title="Install dependencies">
@@ -86,6 +89,7 @@ You'll need three things installed on your machine:
 
     This installs everything in one shot — the Next.js app, the shared UI
     package, and all tooling.
+
   </Step>
 
   <Step title="Start the dev server">
@@ -96,6 +100,7 @@ You'll need three things installed on your machine:
 
     Open [localhost:3000](http://localhost:3000). You should see this page.
     Every change you make to an MDX file hot-reloads in the browser instantly.
+
   </Step>
 
   <Step title="Make it yours">
@@ -115,6 +120,7 @@ You'll need three things installed on your machine:
     ```
 
     Save the file. The header updates immediately.
+
   </Step>
 
   <Step title="Write your first doc">
@@ -142,6 +148,7 @@ You'll need three things installed on your machine:
     ```
 
     Your page appears in the sidebar immediately — no restart needed.
+
   </Step>
 </Steps>
 
@@ -152,13 +159,13 @@ You'll need three things installed on your machine:
 There is no nav config file. The sidebar is generated entirely from your
 frontmatter fields:
 
-| Field | What it does |
-|-------|-------------|
-| `section` | Which top-level tab this page belongs to (`docs`, `api-reference`, `cookbook`, `contributors`) |
-| `nav` | The sidebar group label within that section (`Tutorials`, `Reference`, `How-to Guides`, etc.) |
-| `order` | Position within the group — lower numbers appear first |
-| `navParent` | Optional sub-section within a group, creates a collapsible nested group |
-| `hidden: true` | Keeps the page out of the sidebar (useful for landing pages) |
+| Field          | What it does                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| `section`      | Which top-level tab this page belongs to (`docs`, `api-reference`, `cookbook`, `contributors`) |
+| `nav`          | The sidebar group label within that section (`Tutorials`, `Reference`, `How-to Guides`, etc.)  |
+| `order`        | Position within the group — lower numbers appear first                                         |
+| `navParent`    | Optional sub-section within a group, creates a collapsible nested group                        |
+| `hidden: true` | Keeps the page out of the sidebar (useful for landing pages)                                   |
 
 A page with `nav: Reference` and `order: 2` will appear as the second item in
 the "Reference" group. That's it — no other config needed.
@@ -229,6 +236,7 @@ drop in React components when you need richer content.
       -H "Authorization: Bearer YOUR_API_KEY"
     ```
     ````
+
   </AccordionItem>
   <AccordionItem title="Which components can I use?">
     All components are globally available — no import statements needed. Just use
@@ -246,6 +254,7 @@ drop in React components when you need richer content.
 
     See every component in action on the
     [Feature Showcase](/contributors/feature-showcase) page.
+
   </AccordionItem>
   <AccordionItem title="What's the difference between all the `type` values?">
     The `type` field follows the [Diátaxis](https://diataxis.fr) framework — a
@@ -260,6 +269,7 @@ drop in React components when you need richer content.
     or `migration` for special content types. The `type` value doesn't change
     how the page renders — it's there to help you think clearly about what
     you're writing.
+
   </AccordionItem>
 </Accordion>
 
@@ -307,15 +317,25 @@ terminal. Then add it back.
 
 <Tiles>
   <Tile title="API Reference" iconName="Code" href="/api-reference">
-    Wire up your OpenAPI spec and get an auto-generated, interactive API explorer.
+    Wire up your OpenAPI spec and get an auto-generated, interactive API
+    explorer.
   </Tile>
   <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
     Short, copy-pasteable recipes for common documentation patterns.
   </Tile>
-  <Tile title="Components & Symbols" iconName="Layers" href="/contributors/components-and-symbols">
-    Full reference for every component, snippet, and text variable available in MDX.
+  <Tile
+    title="Components & Symbols"
+    iconName="Layers"
+    href="/contributors/components-and-symbols"
+  >
+    Full reference for every component, snippet, and text variable available in
+    MDX.
   </Tile>
-  <Tile title="Feature Showcase" iconName="Sparkles" href="/contributors/feature-showcase">
+  <Tile
+    title="Feature Showcase"
+    iconName="Sparkles"
+    href="/contributors/feature-showcase"
+  >
     A single page demoing every component side-by-side. Good for copy-pasting.
   </Tile>
 </Tiles>
