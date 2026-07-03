@@ -8,9 +8,10 @@ order: 1
 ---
 
 The API Reference tab is powered by [Scalar](https://scalar.com), an open-source
-interactive API explorer. Pepa ships with a placeholder OpenAPI spec so the tab
-has something to display from day one. This guide explains how to swap it out
-for your own.
+interactive API explorer. Pepa ships with the real
+[Open-Meteo weather forecast API](https://open-meteo.com) spec as a working
+example — it's a free, no-auth API so you can make live requests right in the
+explorer. This guide explains how to swap it out for your own spec.
 
 ---
 
@@ -45,7 +46,7 @@ The pipeline has three parts:
 
     ```
     apps/docs/openapi/
-    ├── example-api.yaml   ← placeholder (can delete this)
+    ├── weather.yaml       ← Open-Meteo example (can delete this)
     └── your-api.yaml      ← your real spec
     ```
 
@@ -65,9 +66,9 @@ The pipeline has three parts:
     ```
   </Step>
 
-  <Step title="Remove the placeholder (optional)">
-    Delete `apps/docs/openapi/example-api.yaml` once your spec is wired up.
-    It's only there to give the tab something to render on a fresh clone.
+  <Step title="Remove the example spec (optional)">
+    Delete `apps/docs/openapi/weather.yaml` once your spec is wired up.
+    It's only there to give the tab a real working example on a fresh clone.
   </Step>
 
   <Step title="Restart the dev server">

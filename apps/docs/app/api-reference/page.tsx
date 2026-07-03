@@ -13,7 +13,7 @@ export default function ApiReferencePage() {
 
     import("@scalar/api-reference").then(({ createApiReference }) => {
       const instance = createApiReference(el, {
-        url: "/openapi/example-api.yaml",
+        url: "/openapi/weather.yaml",
         darkMode: document.documentElement.dataset.theme === "dark",
       });
       destroy = instance?.destroy;
