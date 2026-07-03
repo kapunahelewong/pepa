@@ -1,0 +1,515 @@
+openapi: 3.1.0
+info:
+  title: Example REST API
+  version: "1.0.0"
+  description: |
+    A working example API built on [JSONPlaceholder](https://jsonplaceholder.typicode.com),
+    a free hosted service that accepts all HTTP methods and returns realistic responses.
+
+    Use it to explore the interactive API explorer — you can execute real requests
+    directly from this page. POST, PATCH, and DELETE requests are accepted and return
+    realistic responses, though data isn't actually persisted between requests.
+
+    **Base URL:** `https://jsonplaceholder.typicode.com`
+  contact:
+    name: JSONPlaceholder
+    url: https://jsonplaceholder.typicode.com
+  license:
+    name: MIT
+
+servers:
+  - url: https://jsonplaceholder.typicode.com
+    description: Public demo server
+
+tags:
+  - name: Posts
+    description: Blog posts with a title, body, and author.
+  - name: Comments
+    description: Comments on posts.
+  - name: Users
+    description: User accounts.
+  - name: Todos
+    description: To-do items with a completion status.
+
+paths:
+
+  # ── Posts ────────────────────────────────────────────────────────────────────
+
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [Posts]
+      summary: List all posts
+      description: Returns all 100 posts. Use `userId` to filter by author.
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+          description: Filter posts by author ID.
+      responses:
+        "200":
+          description: An array of posts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+              example:
+                - id: 1
+                  userId: 1
+                  title: "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+                  body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+
+    post:
+      operationId: createPost
+      tags: [Posts]
+      summary: Create a post
+      description: |
+        Creates a new post. The response includes the new post with an `id` of `101`
+        (JSONPlaceholder doesn't persist data, but it simulates a real create response).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+            example:
+              userId: 1
+              title: "My new post"
+              body: "This is the body of my new post."
+      responses:
+        "201":
+          description: The created post, including its assigned ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+              example:
+                id: 101
+                userId: 1
+                title: "My new post"
+                body: "This is the body of my new post."
+
+  /posts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 1
+        description: The post ID.
+
+    get:
+      operationId: getPost
+      tags: [Posts]
+      summary: Get a post
+      responses:
+        "200":
+          description: The requested post.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+              example:
+                id: 1
+                userId: 1
+                title: "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+                body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    put:
+      operationId: replacePost
+      tags: [Posts]
+      summary: Replace a post
+      description: Replaces the entire post. All fields are required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+            example:
+              userId: 1
+              title: "Updated title"
+              body: "Updated body content."
+      responses:
+        "200":
+          description: The updated post.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updatePost
+      tags: [Posts]
+      summary: Update a post
+      description: Partial update — only send the fields you want to change.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPatch"
+            example:
+              title: "Just updating the title"
+      responses:
+        "200":
+          description: The updated post.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deletePost
+      tags: [Posts]
+      summary: Delete a post
+      responses:
+        "200":
+          description: Empty object returned on successful deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Comments ─────────────────────────────────────────────────────────────────
+
+  /posts/{id}/comments:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: The post ID.
+    get:
+      operationId: listPostComments
+      tags: [Comments]
+      summary: List comments on a post
+      description: Returns all comments for a specific post.
+      responses:
+        "200":
+          description: An array of comments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+
+  /comments:
+    get:
+      operationId: listComments
+      tags: [Comments]
+      summary: List all comments
+      parameters:
+        - name: postId
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+          description: Filter comments by post ID.
+      responses:
+        "200":
+          description: An array of comments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+
+  # ── Todos ─────────────────────────────────────────────────────────────────────
+
+  /todos:
+    get:
+      operationId: listTodos
+      tags: [Todos]
+      summary: List all todos
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+          description: Filter todos by user.
+        - name: completed
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter by completion status.
+      responses:
+        "200":
+          description: An array of todos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Todo"
+              example:
+                - id: 1
+                  userId: 1
+                  title: "delectus aut autem"
+                  completed: false
+
+  /todos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: The todo ID.
+    get:
+      operationId: getTodo
+      tags: [Todos]
+      summary: Get a todo
+      responses:
+        "200":
+          description: The requested todo.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateTodo
+      tags: [Todos]
+      summary: Update a todo
+      description: Mark a todo complete or update its title.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                completed:
+                  type: boolean
+            example:
+              completed: true
+      responses:
+        "200":
+          description: The updated todo.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+
+    delete:
+      operationId: deleteTodo
+      tags: [Todos]
+      summary: Delete a todo
+      responses:
+        "200":
+          description: Empty object returned on successful deletion.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+
+  # ── Users ─────────────────────────────────────────────────────────────────────
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [Users]
+      summary: List all users
+      responses:
+        "200":
+          description: An array of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: The user ID.
+    get:
+      operationId: getUser
+      tags: [Users]
+      summary: Get a user
+      responses:
+        "200":
+          description: The requested user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+# ── Components ────────────────────────────────────────────────────────────────
+
+components:
+  schemas:
+    Post:
+      type: object
+      required: [id, userId, title, body]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        userId:
+          type: integer
+          description: ID of the post author.
+          example: 1
+        title:
+          type: string
+          example: "sunt aut facere repellat provident occaecati"
+        body:
+          type: string
+          example: "quia et suscipit\nsuscipit recusandae consequuntur"
+
+    PostInput:
+      type: object
+      required: [userId, title, body]
+      properties:
+        userId:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "My new post"
+        body:
+          type: string
+          example: "Post body content."
+
+    PostPatch:
+      type: object
+      properties:
+        userId:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+
+    Comment:
+      type: object
+      required: [id, postId, name, email, body]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        postId:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "id labore ex et quam laborum"
+        email:
+          type: string
+          format: email
+          example: "Eliseo@gardner.biz"
+        body:
+          type: string
+          example: "laudantium enim quasi est quidem magnam voluptate"
+
+    Todo:
+      type: object
+      required: [id, userId, title, completed]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "delectus aut autem"
+        completed:
+          type: boolean
+          example: false
+
+    User:
+      type: object
+      required: [id, name, username, email]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: "Leanne Graham"
+        username:
+          type: string
+          example: "Bret"
+        email:
+          type: string
+          format: email
+          example: "Sincere@april.biz"
+        phone:
+          type: string
+          example: "1-770-736-8031 x56442"
+        website:
+          type: string
+          example: "hildegard.org"
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: "Kulas Light"
+            city:
+              type: string
+              example: "Gwenborough"
+            zipcode:
+              type: string
+              example: "92998-3874"
+        company:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Romaguera-Crona"
+
+  responses:
+    NotFound:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            type: object
+          example: {}

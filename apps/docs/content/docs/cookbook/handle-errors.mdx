@@ -1,0 +1,62 @@
+---
+title: Handle errors
+description: Branch on HTTP status codes and surface error messages from API responses.
+type: cookbook
+section: cookbook
+nav: Reference
+order: 3
+---
+
+## Goal
+
+Detect failure responses, extract the error detail, and handle specific status
+codes differently — without crashing or silently swallowing failures.
+
+## The code
+
+```typescript
+async function apiFetch(path: string, options?: RequestInit) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com${path}`, options);
+
+  if (!res.ok) {
+    let message = `Request failed: ${res.status} ${res.statusText}`;
+
+    // Try to extract a message from the response body
+    try {
+      const body = await res.json();
+      if (body?.message) message = body.message;
+      else if (body?.error) message = body.error;
+    } catch {
+      // Body wasn't JSON — use the status text
+    }
+
+    if (res.status === 401) throw new Error(`Unauthorized: ${message}`);
+    if (res.status === 404) throw new Error(`Not found: ${message}`);
+    if (res.status === 429) throw new Error(`Rate limited — retry after ${res.headers.get("Retry-After")}s`);
+    if (res.status >= 500) throw new Error(`Server error: ${message}`);
+
+    throw new Error(message);
+  }
+
+  // 204 No Content has no body
+  if (res.status === 204) return null;
+
+  return res.json();
+}
+
+// Usage
+try {
+  const post = await apiFetch("/posts/999"); // 404 — this ID doesn't exist
+  console.log(post);
+} catch (err) {
+  console.error(err.message); // "Not found: {}"
+}
+```
+
+## What to change
+
+| Line | What to swap |
+|------|-------------|
+| `https://jsonplaceholder.typicode.com` | Your API base URL |
+| `body?.message` / `body?.error` | The field name your API uses for error details |
+| The `401` / `404` / `429` branches | Add or remove cases for your API's error codes |

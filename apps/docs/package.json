@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "validate": "tsx scripts/validate.ts",
     "collect": "content-collections build",
     "generate-llms-txt": "tsx scripts/generate-llms-txt.ts",
     "generate-search-index": "tsx scripts/generate-search-index.ts",

@@ -7,6 +7,7 @@
     "dev": "pnpm --filter docs dev",
     "build": "pnpm --filter docs build",
     "typecheck": "pnpm --filter docs typecheck",
+    "validate": "pnpm --filter docs validate",
     "check-links": "lychee --offline --no-progress 'apps/docs/content/**/*.mdx'",
     "vale:sync": "vale sync",
     "lint:style": "vale apps/docs/content/"
