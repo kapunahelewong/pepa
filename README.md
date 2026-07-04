@@ -1,8 +1,6 @@
 # Pepa
 
-[![CI](https://github.com/kapunahelewong/pepa/actions/workflows/ci.yml/badge.svg)](https://github.com/kapunahelewong/pepa/actions/workflows/ci.yml)
-
-[![Deploy docs](https://github.com/kapunahelewong/pepa/actions/workflows/docs-deploy.yml/badge.svg)](https://github.com/kapunahelewong/pepa/actions/workflows/docs-deploy.yml)
+[![CI](https://github.com/kapunahelewong/pepa/actions/workflows/ci.yml/badge.svg)](https://github.com/kapunahelewong/pepa/actions/workflows/ci.yml) [![Deploy docs](https://github.com/kapunahelewong/pepa/actions/workflows/docs-deploy.yml/badge.svg)](https://github.com/kapunahelewong/pepa/actions/workflows/docs-deploy.yml)
 
 An open-source documentation platform: write docs in MDX, get a fast static
 site, full-text search, an API reference viewer, and a connector that lets AI
