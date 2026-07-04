@@ -1,6 +1,3 @@
-[params]
-# These patterns appear in code examples throughout the docs.
-# They are intentional placeholders — not real URLs to check.
 exclude = [
   "localhost",
   "127\\.0\\.0\\.1",
@@ -10,8 +7,5 @@ exclude = [
   "you\\.github\\.io",
 ]
 
-# Wait up to 20s for slow external hosts
 timeout = 20
-
-# Retry transient failures before reporting them as broken
 max_retries = 3
