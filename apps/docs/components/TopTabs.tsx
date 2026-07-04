@@ -22,6 +22,7 @@ export function TopTabs() {
 
   return (
     <div className="top-tabs">
+      <div className="top-tabs-inner">
       {enabledSections.map((section) => {
         const firstSegment = pathname.split("/")[1];
         // "docs" section owns the root and any path not claimed by another section
@@ -39,6 +40,7 @@ export function TopTabs() {
           </button>
         );
       })}
+      </div>
     </div>
   );
 }

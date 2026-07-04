@@ -4,13 +4,17 @@
 
 ## Docs
 - [How to Authenticate](https://example.github.io/pepa/api/authentication): Pass your API key correctly on every request.
+- [Setting Up the API Reference](https://example.github.io/pepa/contributors/api-reference-setup): How to connect your own OpenAPI spec and configure the interactive API explorer.
 - [Components and Symbols](https://example.github.io/pepa/contributors/components-and-symbols): How to use shared UI components, reusable snippets, and text variables in MDX.
+- [Feature Showcase](https://example.github.io/pepa/contributors/feature-showcase): A living demo of every component and platform feature. Use this as a reference when authoring.
 - [Frontmatter Reference](https://example.github.io/pepa/contributors/frontmatter-reference): Every frontmatter field, what it does, and when to use it.
 - [Contributor Overview](https://example.github.io/pepa/contributors/overview): How this documentation platform works and where everything lives.
+- [Platform Features](https://example.github.io/pepa/contributors/platform-features): What Pepa adds to every page automatically, and how to configure it.
 - [Style Linting](https://example.github.io/pepa/contributors/style-linting): How to run the Google Developer Style Guide linter and interpret its output.
 - [Running a Term Sweep](https://example.github.io/pepa/contributors/sweeps): Find and interactively replace a term across all docs in one pass.
 - [Authenticate a request](https://example.github.io/pepa/cookbook/authenticate-a-request): Add a bearer token to every API request.
+- [Handle errors](https://example.github.io/pepa/cookbook/handle-errors): Branch on HTTP status codes and surface error messages from API responses.
 - [Cookbook](https://example.github.io/pepa/cookbook/overview): Copy-pasteable recipes for common tasks. Minimal explanation, maximum code.
 - [Paginate through results](https://example.github.io/pepa/cookbook/paginate-results): Walk a cursor-paginated list endpoint until all records are fetched.
-- [Feature Showcase](https://example.github.io/pepa/example-doc): A living demo of every component and platform feature. Use this as a reference when authoring.
-- [Getting Started](https://example.github.io/pepa/getting-started): Install the platform and write your first doc.
+- [Getting Started](https://example.github.io/pepa/getting-started): Get Pepa running and publish your first doc in under ten minutes.
+- [Reference example](https://example.github.io/pepa/reference-example): example document

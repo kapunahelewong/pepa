@@ -6,16 +6,27 @@ import { withContentCollections } from "@content-collections/next";
 // API routes / server actions / next/image optimization API at runtime —
 // see README for how search and the AI-agent connector are designed around
 // that constraint instead of fighting it.
+
+// When deploying to GitHub Pages at https://<user>.github.io/<repo>/,
+// the deploy workflow sets SITE_URL to the Pages base URL. If that URL
+// has a subpath (e.g. /pepa), it becomes the basePath so asset links work.
+// Locally SITE_URL is unset, so basePath is undefined and the site runs at /.
+const siteUrl = process.env.SITE_URL ?? "";
+const basePath = (() => {
+  try {
+    const p = new URL(siteUrl).pathname.replace(/\/$/, "");
+    return p || undefined;
+  } catch {
+    return undefined;
+  }
+})();
+
 const nextConfig: NextConfig = {
   output: "export",
   images: {
     unoptimized: true, // no image optimization API available on static hosts
   },
-  // If you deploy to https://<user>.github.io/<repo>/ rather than a custom
-  // domain, uncomment and set this to your repo name. Note that if you
-  // do this during local development it'll break, so you have to toggle it for 
-  // ghpages without a custom domain:
-  // basePath: "/pepa",
+  basePath,
 };
 
 export default withContentCollections(nextConfig);

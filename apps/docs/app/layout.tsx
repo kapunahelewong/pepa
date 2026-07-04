@@ -16,20 +16,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <header
-          style={{
+        <header style={{ borderBottom: "1px solid var(--border)" }}>
+          <div style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            maxWidth: "1400px",
+            margin: "0 auto",
             padding: "1rem 1.5rem",
-            borderBottom: "1px solid var(--border)",
-            fontSize: "2rem"
-          }}
-        >
-          <strong>pepa</strong>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <SearchBox />
-            <ThemeToggle />
+            fontSize: "2rem",
+          }}>
+            <strong>pepa</strong>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <SearchBox />
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <TopTabs />

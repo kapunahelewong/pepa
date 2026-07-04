@@ -2,8 +2,6 @@
 
 Pass your API key correctly on every request.
 
-# How to Authenticate
-
 Every request to the Widgets API must include a bearer token in the
 `Authorization` header. This page explains how to obtain a key and attach
 it to your requests. For the full auth scheme spec (scopes, error codes,
@@ -25,13 +23,151 @@ curl https://api.example.com/v1/widgets \
 
 ## Common errors
 
-| Status | Code | Cause |
-|--------|------|-------|
-| 401 | `unauthorized` | Missing or malformed `Authorization` header |
-| 401 | `unauthorized` | Key has been revoked |
+| Status | Code           | Cause                                       |
+| ------ | -------------- | ------------------------------------------- |
+| 401    | `unauthorized` | Missing or malformed `Authorization` header |
+| 401    | `unauthorized` | Key has been revoked                        |
 
 If you receive a 401, double-check that the header value is exactly
 `Bearer <key>` with no extra whitespace.
+
+---
+
+# Setting Up the API Reference
+
+How to connect your own OpenAPI spec and configure the interactive API explorer.
+
+The API Reference tab is powered by [Scalar](https://scalar.com), an open-source
+interactive API explorer. Pepa ships with a working example spec built on
+[JSONPlaceholder](https://jsonplaceholder.typicode.com) — a free hosted service
+with real GET, POST, PUT, PATCH, and DELETE endpoints for posts, comments, todos,
+and users. You can execute requests directly in the explorer with no API key.
+This guide explains how to swap it out for your own spec.
+
+---
+
+## How it works
+
+The pipeline has three parts:
+
+<Steps>
+  <Step title="Your spec lives in openapi/">
+    Any `.yaml` or `.json` file you place in `apps/docs/openapi/` is your source
+    of truth.
+  </Step>
+  <Step title="It gets copied to public/ at build time">
+    The `copy-openapi` script (run automatically before `pnpm dev` and
+    `pnpm build`) copies everything in `openapi/` to `public/openapi/`, where
+    Next.js serves it as a static file.
+  </Step>
+  <Step title="Scalar loads it at runtime">
+    The API reference page points Scalar at the served file. Scalar fetches it
+    in the browser and renders the interactive explorer — no server required.
+  </Step>
+</Steps>
+
+---
+
+## Swap in your own spec
+
+<Steps>
+  <Step title="Add your spec file">
+    Copy your OpenAPI 3.x spec into `apps/docs/openapi/`. The filename is up to
+    you:
+
+    ```
+    apps/docs/openapi/
+    ├── example-api.yaml   ← JSONPlaceholder demo (can delete this)
+    └── your-api.yaml      ← your real spec
+    ```
+
+    <Callout type="tip">
+      Both OpenAPI 3.0 and 3.1 work. JSON is also accepted alongside YAML.
+    </Callout>
+  </Step>
+
+  <Step title="Point Scalar at your file">
+    Open `apps/docs/app/api-reference/page.tsx` and update the `url` field:
+
+    ```ts
+    const instance = createApiReference(el, {
+      url: "/openapi/your-api.yaml",   // ← change this
+      darkMode: document.documentElement.dataset.theme === "dark",
+    });
+    ```
+  </Step>
+
+  <Step title="Remove the example spec (optional)">
+    Delete `apps/docs/openapi/example-api.yaml` once your spec is wired up.
+    It's only there to give the tab something to render on a fresh clone.
+  </Step>
+
+  <Step title="Restart the dev server">
+    ```bash
+    pnpm dev
+    ```
+
+    The `predev` step runs `copy-openapi` automatically, so your spec is copied
+    to `public/openapi/` before the server starts. Navigate to the API Reference
+    tab to confirm Scalar is loading your spec.
+  </Step>
+</Steps>
+
+---
+
+## Disable the tab entirely
+
+If your project doesn't have an API, turn the tab off in `pepa.config.ts`:
+
+```ts
+{ id: "api-reference", label: "API Reference", href: "/api-reference", enabled: false },
+```
+
+The tab disappears from the header. The route still exists but won't appear in
+navigation or the search index.
+
+---
+
+## Multiple specs
+
+If you have more than one API (for example, a public API and an internal one),
+you can drop multiple files into `openapi/` and switch between them:
+
+```
+apps/docs/openapi/
+├── public-api.yaml
+└── internal-api.yaml
+```
+
+Point Scalar at whichever one you want as the default in `page.tsx`. To let
+readers switch between specs, you'd need to extend the page component to render
+a selector — this isn't built in yet, but the files are all served statically so
+client-side switching is straightforward to add.
+
+---
+
+## Common issues
+
+<Accordion>
+  <AccordionItem title="The explorer shows 'Failed to fetch' or a network error">
+    The spec file isn't being served. Check that:
+
+    1. Your file is in `apps/docs/openapi/` (not `apps/docs/public/openapi/` directly)
+    2. You restarted the dev server after adding the file (so `predev` ran `copy-openapi`)
+    3. The filename in `page.tsx` matches the actual filename exactly, including extension
+  </AccordionItem>
+  <AccordionItem title="Scalar loads but my spec has validation errors">
+    Scalar renders even with spec errors, but some operations may not display
+    correctly. Run your spec through the
+    [Swagger Editor](https://editor.swagger.io) or the Scalar validator to catch
+    issues before publishing.
+  </AccordionItem>
+  <AccordionItem title="The API Reference tab is slow on first load">
+    This is expected in dev — Turbopack compiles Scalar's JavaScript module on
+    first visit (~5 seconds). After that first compile it's cached for the rest
+    of the dev session. Production builds are pre-compiled and load instantly.
+  </AccordionItem>
+</Accordion>
 
 ---
 
@@ -39,14 +175,12 @@ If you receive a 401, double-check that the header value is exactly
 
 How to use shared UI components, reusable snippets, and text variables in MDX.
 
-# Components and Symbols
-
 ## UI components
 
 Import from `docs-ui` in any MDX file:
 
 ```mdx
-import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui"
+import { Callout, Tabs, Tab, CodeGroup, Kbd, Icon } from "docs-ui";
 ```
 
 ### Callout
@@ -60,16 +194,12 @@ Types: `tip`, `warning`, `note`, `danger`.
 
 ### Tabs and CodeGroup
 
-```mdx
+````mdx
 <Tabs>
-  <Tab label="pnpm">```bash
-pnpm install
-```</Tab>
-  <Tab label="npm">```bash
-npm install
-```</Tab>
+  <Tab label="pnpm">```bash pnpm install ```</Tab>
+  <Tab label="npm">```bash npm install ```</Tab>
 </Tabs>
-```
+````
 
 ### Kbd
 
@@ -85,8 +215,8 @@ Press <Kbd>Ctrl</Kbd>+<Kbd>C</Kbd> to copy.
 Pass any [Lucide](https://lucide.dev/icons/) icon component:
 
 ```mdx
-import { Icon } from "docs-ui"
-import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react"
+import { Icon } from "docs-ui";
+import { ExternalLink, AlertTriangle, CheckCircle } from "lucide-react";
 
 <Icon icon={ExternalLink} />
 <Icon icon={AlertTriangle} size={20} />
@@ -106,13 +236,13 @@ export const vars = {
   productName: "Pepa",
   version: "1.0.0",
   repoUrl: "https://github.com/your-org/pepa",
-}
+};
 ```
 
 Use them in MDX:
 
 ```mdx
-import { vars } from "@/lib/vars"
+import { vars } from "@/lib/vars";
 
 **{vars.productName}** version {vars.version} introduced this feature.
 ```
@@ -129,7 +259,7 @@ code block — defined in `packages/ui/src/snippets/`. Edit the component once
 and it updates in every doc that uses it.
 
 ```mdx
-import { AuthNote, BearerExample } from "docs-ui/snippets"
+import { AuthNote, BearerExample } from "docs-ui/snippets";
 
 <AuthNote />
 <BearerExample />
@@ -141,14 +271,14 @@ import { AuthNote, BearerExample } from "docs-ui/snippets"
 
 ```tsx
 export function MySnippet() {
-  return <p>Content that appears identically in every doc that uses it.</p>
+  return <p>Content that appears identically in every doc that uses it.</p>;
 }
 ```
 
 2. Export it from `packages/ui/src/snippets/index.tsx`:
 
 ```ts
-export { MySnippet } from "./MySnippet"
+export { MySnippet } from "./MySnippet";
 ```
 
 3. Import and use it in any MDX file:
@@ -161,6 +291,207 @@ import { MySnippet } from "docs-ui/snippets"
 Snippets can contain anything a React component can: prose, code blocks,
 callouts, tables, other components. Keep them focused — if a snippet grows
 into a full page's worth of content, it should become a real doc instead.
+
+---
+
+# Feature Showcase
+
+A living demo of every component and platform feature. Use this as a reference when authoring.
+
+This page demonstrates every component available to doc authors.
+The `status: beta` badge in the header above is showing off that feature.
+
+No imports needed — all components are globally registered.
+
+---
+
+## Callouts
+
+<Callout type="tip">
+  Use `type="tip"` for helpful hints that aren't critical.
+</Callout>
+
+<Callout type="warning">
+  Use `type="warning"` for things that can go wrong.
+</Callout>
+
+## Tabs
+
+<Tabs>
+  <Tab label="pnpm">```bash pnpm install && pnpm dev ```</Tab>
+  <Tab label="npm">```bash npm install && npm run dev ```</Tab>
+  <Tab label="yarn">```bash yarn && yarn dev ```</Tab>
+</Tabs>
+
+## Syntax-highlighted code
+
+```typescript
+async function fetchWidgets(apiKey: string) {
+  const res = await fetch("https://api.example.com/v1/widgets", {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  return res.json();
+}
+```
+
+## Tables
+
+| Component  | MDX tag                      | What it does                   |
+| ---------- | ---------------------------- | ------------------------------ |
+| Callout    | `<Callout type="tip">`       | Tips, warnings, notes          |
+| Tabs / Tab | `<Tabs><Tab label="...">`    | Multi-tab content              |
+| CodeGroup  | `<CodeGroup>`                | Grouped code blocks            |
+| Kbd        | `<Kbd>⌘K</Kbd>`              | Keyboard shortcut styling      |
+| Icon       | `<Icon icon={...} />`        | Inline Lucide icons            |
+| Var        | `<Var name="productName" />` | Text variable                  |
+| AuthNote   | `<AuthNote />`               | Reusable auth reminder snippet |
+
+## Keyboard shortcuts
+
+Press <Kbd>⌘K</Kbd> to open search.
+Press <Kbd>⌘</Kbd>+<Kbd>Shift</Kbd>+<Kbd>P</Kbd> for the command palette.
+
+## Icons
+
+<LucideCircleCheck size={16} /> Success &nbsp;
+<LucideTriangleAlert size={16} /> Warning &nbsp;
+<LucideInfo size={16} /> Info &nbsp;
+<LucideLink size={16} /> Link
+
+Any icon from [lucide.dev/icons](https://lucide.dev/icons) is available as
+`<Lucide{IconName} />` — no import required.
+
+## Text variables
+
+Product name: **<Var name="productName" />** · Version: **<Var name="version" />**
+
+Defined in `lib/vars.ts` — change once, updates everywhere.
+
+## Reusable snippet
+
+`<AuthNote />` is defined once in `packages/ui/src/snippets/AuthNote.tsx`:
+
+<AuthNote />
+
+## Status badges
+
+Add to any page's frontmatter — stable pages get no badge:
+
+```yaml
+status: beta          # blue
+status: experimental  # orange
+status: deprecated    # red
+```
+
+## Steps
+
+Numbered steps with a connecting line. Code blocks, callouts, and any other
+content can live inside a step.
+
+<Steps>
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configure your project">
+    Edit `apps/docs/pepa.config.ts` to set your project name and enable the
+    sections you need.
+  </Step>
+  <Step title="Add your first doc">
+    Create an `.mdx` file under `content/docs/` with the required frontmatter,
+    then run `pnpm dev` to see it appear in the sidebar.
+
+    ```yaml
+    ---
+    title: My First Page
+    nav: Tutorials
+    order: 1
+    ---
+    ```
+
+  </Step>
+  <Step title="Deploy">
+    Push to `main`. GitHub Actions builds the static export and publishes it
+    to GitHub Pages automatically.
+  </Step>
+</Steps>
+
+## Tiles
+
+Cards arranged in a responsive grid. A single tile expands to fill the full
+width automatically.
+
+<Tiles>
+  <Tile title="Tutorials" iconName="BookOpen" href="/getting-started">
+    Learning-oriented guides that walk you through a first success.
+  </Tile>
+  <Tile title="API Reference" iconName="Code" href="/api-reference">
+    Auto-generated from your OpenAPI spec via Scalar.
+  </Tile>
+  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
+    Copy-pasteable recipes — minimal explanation, maximum code.
+  </Tile>
+  <Tile title="Contributors" iconName="Users" href="/contributors/overview">
+    Platform docs for maintainers: sweeps, style linting, and components.
+  </Tile>
+</Tiles>
+
+A single tile fills the full row:
+
+<Tiles>
+  <Tile title="Single tile" iconName="Zap" href="/getting-started">
+    One tile always expands to the full content width.
+  </Tile>
+</Tiles>
+
+## Accordion
+
+Collapsible sections. Uses native `<details>` — no JavaScript required.
+
+<Accordion>
+  <AccordionItem title="What is Diátaxis?">
+    Diátaxis is a framework that organises documentation into four types:
+    **Tutorials**, **How-to Guides**, **Reference**, and **Explanation**.
+    Each type serves a different user need.
+  </AccordionItem>
+  <AccordionItem title="Do I need to use all four types?" open>
+    No. All four Diátaxis sections (and the special types like Cookbook) are
+    **opt-in**. Set `enabled: false` in `pepa.config.ts` to hide any section
+    you don't need.
+  </AccordionItem>
+  <AccordionItem title="Can I nest pages in the sidebar?">
+    Yes — add a `navParent` field to your frontmatter to group related pages
+    under a collapsible heading within a nav group:
+
+    ```yaml
+    nav: Reference
+    navParent: Authentication
+    ```
+
+  </AccordionItem>
+</Accordion>
+
+## Nested nav sidebar
+
+Pages can be grouped under a collapsible sub-section within any nav group.
+Add `navParent` to the page's frontmatter:
+
+```yaml
+---
+title: Token Types
+nav: Reference
+navParent: Authentication
+order: 1
+---
+```
+
+The sidebar renders the sub-section collapsed by default. It auto-opens when
+the active page lives inside it.
+
+## Heading anchor links
+
+Hover any heading — a chain-link icon appears. Click to copy the direct URL.
 
 ---
 
@@ -268,6 +599,25 @@ stable is the default and gets no badge.
 | `experimental` | Orange | May change significantly or be removed |
 | `deprecated` | Red | Will be removed; link to the replacement |
 
+### `navParent`
+
+```yaml
+navParent: Authentication
+```
+
+Creates a collapsible sub-section within the sidebar group. All pages that share
+the same `nav` and `navParent` values are grouped under a twirl-open heading.
+The sub-section opens automatically when the reader is on one of its pages.
+
+```yaml
+# Example: two pages nested under "Authentication" inside the Reference group
+nav: Reference
+navParent: Authentication
+```
+
+Omit this field to have the page appear directly in the top level of its `nav`
+group with no nesting.
+
 ### `hidden`
 
 ```yaml
@@ -277,6 +627,27 @@ hidden: true
 Excludes the page from the sidebar and nav tree. The page still exists at its
 URL and is included in the build — useful for landing pages or pages linked
 from elsewhere but not meant to appear in navigation.
+
+### `copyable`
+
+```yaml
+copyable: true
+```
+
+Shows a **Copy page** button in the top-right corner of the content header.
+Clicking it copies the full rendered text of the page to the clipboard — useful
+for readers who want to paste the content into an AI assistant, a notes app, or
+another document.
+
+The button is off by default. Add `copyable: true` to any page where sharing
+the full content in one click would be genuinely useful — long reference pages,
+tutorials, and cookbook recipes are good candidates. Avoid it on pages that are
+mostly navigation or placeholder content.
+
+<Callout type="tip">
+  The copy captures the rendered text (what readers see), not the raw MDX
+  source. Code blocks, table content, and component output are all included.
+</Callout>
 
 ---
 
@@ -319,8 +690,9 @@ the correct `section`, `nav`, and `order` in its frontmatter.
 ## How builds work
 
 ```bash
-pnpm dev     # starts Next.js dev server at localhost:3000
-pnpm build   # full static export into out/
+pnpm dev      # starts Next.js dev server at localhost:3000
+pnpm validate # check everything without building (see below)
+pnpm build    # full static export into out/
 ```
 
 The prebuild step runs automatically before `pnpm build`:
@@ -332,6 +704,123 @@ The prebuild step runs automatically before `pnpm build`:
 
 A missing required frontmatter field (like `title`) fails the build
 immediately with a clear error — that's intentional.
+
+## Validating without building
+
+`pnpm validate` runs three fast checks and exits with a clear pass/fail:
+
+```bash
+✓ Frontmatter & MDX    (356ms)  — schema errors, MDX parse failures
+✓ TypeScript           (2s)     — type errors across the whole app
+✓ Internal links       (0 broken) — /slug links that don't point to a real page
+```
+
+Run it before opening a PR. CI runs it automatically on every push and pull
+request. If a check fails, the output tells you the file and line number:
+
+```
+✗ Internal links     (1 broken)
+
+  content/docs/cookbook/overview.mdx
+    line 26  →  /cookbook/handle-errors  (no matching page)
+```
+
+External links (http/https URLs) are checked separately by
+[lychee](https://lychee.cli.rs) in CI after the build step.
+
+## What the platform adds to every page
+
+Breadcrumbs, word count, previous/next navigation, and the "Edit on GitHub" link are all generated
+automatically — no frontmatter required. See [Platform Features](/contributors/platform-features)
+for how each one works and how to configure them.
+
+---
+
+# Platform Features
+
+What Pepa adds to every page automatically, and how to configure it.
+
+Pepa adds several UI features to every doc page. Most of them are automatic — they derive their data from
+the frontmatter you're already writing. A few are configured at the platform level in `pepa.config.ts`.
+
+## Breadcrumbs
+
+Every page shows a breadcrumb trail above the title:
+
+```
+Docs / Quickstart
+```
+
+The first segment is the section label (e.g., "Docs", "Cookbook") and links back to the section's
+landing page. The second segment is the `nav` group the page belongs to. These come from the `section`
+and `nav` frontmatter fields — no extra work required.
+
+## Word count and reading time
+
+A metadata line appears between the description and the page body:
+
+```
+1,234 words · 6 min read
+```
+
+Both are computed automatically from the page content:
+
+- **Word count** is derived from the prose text, with code blocks and JSX component tags stripped out.
+  It reflects the amount of content a reader will encounter, not the raw source size.
+- **Reading time** uses 200 words per minute as a baseline. It's shown as a secondary signal — useful
+  for planning, but reading speed varies widely between readers.
+
+Neither field appears in frontmatter. They update automatically as pages are edited.
+
+## Previous and Next navigation
+
+At the bottom of every page, Pepa shows cards linking to the previous and next page in the section:
+
+```
+← Getting Started         API Authentication →
+```
+
+Pages are ordered by nav group (in the order listed in the frontmatter `nav` enum), then by `order`
+within each group, then alphabetically by title. Pages with `hidden: true` are excluded.
+
+The order is the same as the sidebar, so "previous" and "next" always follow the reading path a
+new reader would naturally take.
+
+## Edit on GitHub
+
+A small "Edit this page on GitHub" link appears below the previous/next cards. Clicking it opens
+the source file for the current page on GitHub so readers can suggest corrections.
+
+Configure it in `pepa.config.ts`:
+
+```ts
+features: {
+  editOnGitHub: "https://github.com/your-org/your-repo/blob/main/apps/docs/content/docs",
+}
+```
+
+Set `editOnGitHub` to the URL of the `content/docs` directory on GitHub, using the `blob/<branch>/`
+path (not `tree/`). Pepa appends the page's slug and `.mdx` extension automatically.
+
+To hide the link entirely — for example on a private or internal deployment — set the value to
+`undefined` or remove the field:
+
+```ts
+features: {
+  editOnGitHub: undefined,
+}
+```
+
+## Copy page button
+
+The copy-page button appears in the top-right corner of the content header, but only on pages where
+you've explicitly opted in via frontmatter:
+
+```yaml
+copyable: true
+```
+
+See the [frontmatter reference](/contributors/frontmatter-reference) for details.
 
 ---
 
@@ -527,18 +1016,76 @@ data = resp.json()["data"]
 
 ---
 
+# Handle errors
+
+Branch on HTTP status codes and surface error messages from API responses.
+
+## Goal
+
+Detect failure responses, extract the error detail, and handle specific status
+codes differently — without crashing or silently swallowing failures.
+
+## The code
+
+```typescript
+async function apiFetch(path: string, options?: RequestInit) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com${path}`, options);
+
+  if (!res.ok) {
+    let message = `Request failed: ${res.status} ${res.statusText}`;
+
+    // Try to extract a message from the response body
+    try {
+      const body = await res.json();
+      if (body?.message) message = body.message;
+      else if (body?.error) message = body.error;
+    } catch {
+      // Body wasn't JSON — use the status text
+    }
+
+    if (res.status === 401) throw new Error(`Unauthorized: ${message}`);
+    if (res.status === 404) throw new Error(`Not found: ${message}`);
+    if (res.status === 429) throw new Error(`Rate limited — retry after ${res.headers.get("Retry-After")}s`);
+    if (res.status >= 500) throw new Error(`Server error: ${message}`);
+
+    throw new Error(message);
+  }
+
+  // 204 No Content has no body
+  if (res.status === 204) return null;
+
+  return res.json();
+}
+
+// Usage
+try {
+  const post = await apiFetch("/posts/999"); // 404 — this ID doesn't exist
+  console.log(post);
+} catch (err) {
+  console.error(err.message); // "Not found: {}"
+}
+```
+
+## What to change
+
+| Line | What to swap |
+|------|-------------|
+| `https://jsonplaceholder.typicode.com` | Your API base URL |
+| `body?.message` / `body?.error` | The field name your API uses for error details |
+| The `401` / `404` / `429` branches | Add or remove cases for your API's error codes |
+
+---
+
 # Cookbook
 
 Copy-pasteable recipes for common tasks. Minimal explanation, maximum code.
-
-import { Callout } from "docs-ui"
 
 Recipes are short, complete, and runnable. Each one solves exactly one problem.
 For background on *why* something works the way it does, see the main docs.
 
 <Callout type="tip">
-  Every recipe uses the Widgets API as the example. Swap in your own endpoints
-  and the patterns transfer directly.
+  Every recipe uses the [JSONPlaceholder](https://jsonplaceholder.typicode.com)
+  API as the example. Swap in your own endpoints and the patterns transfer directly.
 </Callout>
 
 ## What's here
@@ -626,199 +1173,348 @@ def fetch_all_widgets(api_key: str) -> list:
 
 ---
 
-# Feature Showcase
+# Getting Started
 
-A living demo of every component and platform feature. Use this as a reference when authoring.
+Get Pepa running and publish your first doc in under ten minutes.
 
-This page demonstrates every component available to doc authors.
-The `status: beta` badge in the header above is showing off that feature.
+**Pepa** is an open-source documentation platform you own completely. Clone it,
+fill it with your content, and ship it — no vendor lock-in, no monthly bill, no
+login required to read your own docs.
 
-No imports needed — all components are globally registered.
+This guide walks you through setup from zero to a live site with your first
+custom page.
+
+<Tiles>
+  <Tile title="Write in MDX" iconName="FileText">
+    Markdown plus React components. If you know Markdown, you already know 80%
+    of what you need.
+  </Tile>
+  <Tile title="Nav builds itself" iconName="Layers">
+    No nav config files. The sidebar is generated from your file's frontmatter.
+    Add a file, set three fields, done.
+  </Tile>
+  <Tile title="Deploy anywhere" iconName="Globe">
+    Pepa exports to a folder of static HTML. It runs on GitHub Pages, Netlify,
+    Vercel, S3 — anything that can serve files.
+  </Tile>
+</Tiles>
 
 ---
 
-## Callouts
+## Before you begin
 
-<Callout type="tip">
-  Use `type="tip"` for helpful hints that aren't critical.
-</Callout>
+You'll need three things installed on your machine:
 
-<Callout type="warning">
-  Use `type="warning"` for things that can go wrong.
-</Callout>
+<Accordion>
+  <AccordionItem title="Node.js 20 or later">
+    Check your version with `node --version`. If you need to install or upgrade,
+    download from [nodejs.org](https://nodejs.org) or use a version manager like
+    `nvm` or `fnm`.
+  </AccordionItem>
+  <AccordionItem title="pnpm">
+    Pepa uses pnpm as its package manager. If you have Node installed, you
+    already have `corepack` — just run:
 
-## Tabs
-
-<Tabs>
-  <Tab label="pnpm">
     ```bash
-    pnpm install && pnpm dev
+    corepack enable
+    corepack prepare pnpm@latest --activate
     ```
-  </Tab>
-  <Tab label="npm">
-    ```bash
-    npm install && npm run dev
-    ```
-  </Tab>
-  <Tab label="yarn">
-    ```bash
-    yarn && yarn dev
-    ```
-  </Tab>
-</Tabs>
 
-## Syntax-highlighted code
+    Or install pnpm directly: `npm install -g pnpm`
 
-```typescript
-async function fetchWidgets(apiKey: string) {
-  const res = await fetch("https://api.example.com/v1/widgets", {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  return res.json();
-}
-```
+  </AccordionItem>
+  <AccordionItem title="Git">
+    Check with `git --version`. Git ships with macOS and most Linux distros.
+    Windows users can get it from [git-scm.com](https://git-scm.com).
+  </AccordionItem>
+</Accordion>
 
-## Tables
+---
 
-| Component | MDX tag | What it does |
-|-----------|---------|--------------|
-| Callout | `<Callout type="tip">` | Tips, warnings, notes |
-| Tabs / Tab | `<Tabs><Tab label="...">` | Multi-tab content |
-| CodeGroup | `<CodeGroup>` | Grouped code blocks |
-| Kbd | `<Kbd>⌘K</Kbd>` | Keyboard shortcut styling |
-| Icon | `<Icon icon={...} />` | Inline Lucide icons |
-| Var | `<Var name="productName" />` | Text variable |
-| AuthNote | `<AuthNote />` | Reusable auth reminder snippet |
-
-## Keyboard shortcuts
-
-Press <Kbd>⌘K</Kbd> to open search.
-Press <Kbd>⌘</Kbd>+<Kbd>Shift</Kbd>+<Kbd>P</Kbd> for the command palette.
-
-## Icons
-
-<LucideCircleCheck size={16} /> Success &nbsp;
-<LucideTriangleAlert size={16} /> Warning &nbsp;
-<LucideInfo size={16} /> Info &nbsp;
-<LucideLink size={16} /> Link
-
-Any icon from [lucide.dev/icons](https://lucide.dev/icons) is available as
-`<Lucide{IconName} />` — no import required.
-
-## Text variables
-
-Product name: **<Var name="productName" />** · Version: **<Var name="version" />**
-
-Defined in `lib/vars.ts` — change once, updates everywhere.
-
-## Reusable snippet
-
-`<AuthNote />` is defined once in `packages/ui/src/snippets/AuthNote.tsx`:
-
-<AuthNote />
-
-## Status badges
-
-Add to any page's frontmatter — stable pages get no badge:
-
-```yaml
-status: beta          # blue
-status: experimental  # orange
-status: deprecated    # red
-```
-
-## Steps
-
-Numbered steps with a connecting line. Code blocks, callouts, and any other
-content can live inside a step.
+## Set up Pepa
 
 <Steps>
+  <Step title="Clone the repository">
+    Replace `my-docs` with whatever you want to call your project:
+
+    ```bash
+    git clone https://github.com/your-org/pepa my-docs
+    cd my-docs
+    ```
+
+    <Callout type="tip">
+      Want to push your docs to your own GitHub repo later? Delete the `.git`
+      folder and run `git init` to start fresh with your own history.
+    </Callout>
+
+  </Step>
+
   <Step title="Install dependencies">
+    From inside the `my-docs` folder:
+
     ```bash
     pnpm install
     ```
+
+    This installs everything in one shot — the Next.js app, the shared UI
+    package, and all tooling.
+
   </Step>
-  <Step title="Configure your project">
-    Edit `apps/docs/pepa.config.ts` to set your project name and enable the
-    sections you need.
+
+  <Step title="Start the dev server">
+    ```bash
+    cd apps/docs
+    pnpm dev
+    ```
+
+    Open [localhost:3000](http://localhost:3000). You should see this page.
+    Every change you make to an MDX file hot-reloads in the browser instantly.
+
   </Step>
-  <Step title="Add your first doc">
-    Create an `.mdx` file under `content/docs/` with the required frontmatter,
-    then run `pnpm dev` to see it appear in the sidebar.
+
+  <Step title="Make it yours">
+    Open `apps/docs/pepa.config.ts`. This is the one file that controls your
+    site's name and which top-level nav tabs are visible:
+
+    ```ts
+    const config: PepaConfig = {
+      name: "my-docs",          // ← change this to your project name
+      sections: [
+        { id: "docs",          label: "Docs",          href: "/getting-started", enabled: true },
+        { id: "api-reference", label: "API Reference", href: "/api-reference",   enabled: false }, // ← enable when ready
+        { id: "cookbook",      label: "Cookbook",      href: "/cookbook/overview", enabled: false },
+      ],
+      // ...
+    }
+    ```
+
+    Save the file. The header updates immediately.
+
+  </Step>
+
+  <Step title="Write your first doc">
+    Create a new file anywhere under `apps/docs/content/docs/`. The file path
+    becomes the URL. For example:
+
+    ```
+    content/docs/introduction.mdx  →  localhost:3000/introduction
+    content/docs/api/auth.mdx      →  localhost:3000/api/auth
+    ```
+
+    Paste this starter frontmatter and save:
 
     ```yaml
     ---
     title: My First Page
+    description: A short description shown under the title.
+    type: tutorial
+    section: docs
     nav: Tutorials
     order: 1
     ---
+
+    Hello, world! This is my first Pepa page.
     ```
-  </Step>
-  <Step title="Deploy">
-    Push to `main`. GitHub Actions builds the static export and publishes it
-    to GitHub Pages automatically.
+
+    Your page appears in the sidebar immediately — no restart needed.
+
   </Step>
 </Steps>
 
-## Tiles
+---
 
-Cards arranged in a responsive grid. A single tile expands to fill the full
-width automatically.
+## How the sidebar works
 
-<Tiles>
-  <Tile title="Tutorials" iconName="BookOpen" href="/getting-started">
-    Learning-oriented guides that walk you through a first success.
-  </Tile>
-  <Tile title="API Reference" iconName="Code" href="/api-reference">
-    Auto-generated from your OpenAPI spec via Scalar.
-  </Tile>
-  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
-    Copy-pasteable recipes — minimal explanation, maximum code.
-  </Tile>
-  <Tile title="Contributors" iconName="Users" href="/contributors/overview">
-    Platform docs for maintainers: sweeps, style linting, and components.
-  </Tile>
-</Tiles>
+There is no nav config file. The sidebar is generated entirely from your
+frontmatter fields:
 
-A single tile fills the full row:
+| Field          | What it does                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| `section`      | Which top-level tab this page belongs to (`docs`, `api-reference`, `cookbook`, `contributors`) |
+| `nav`          | The sidebar group label within that section (`Tutorials`, `Reference`, `How-to Guides`, etc.)  |
+| `order`        | Position within the group — lower numbers appear first                                         |
+| `navParent`    | Optional sub-section within a group, creates a collapsible nested group                        |
+| `hidden: true` | Keeps the page out of the sidebar (useful for landing pages)                                   |
 
-<Tiles>
-  <Tile title="Single tile" iconName="Zap" href="/getting-started">
-    One tile always expands to the full content width.
-  </Tile>
-</Tiles>
+A page with `nav: Reference` and `order: 2` will appear as the second item in
+the "Reference" group. That's it — no other config needed.
 
-## Heading anchor links
-
-Hover any heading — a chain-link icon appears. Click to copy the direct URL.
+<Callout type="tip">
+  To create a nested sub-section, add `navParent: "Authentication"` to any
+  page's frontmatter. It groups under a collapsible "Authentication" heading
+  inside whatever `nav` group the page belongs to.
+</Callout>
 
 ---
 
-# Getting Started
+## How the project is organized
 
-Install the platform and write your first doc.
-
-import { Callout } from "docs-ui";
-
-This is a sample page to prove the content pipeline works end to end:
-frontmatter validation, MDX compilation, syntax highlighting, and a custom
-component imported from the shared `docs-ui` package.
-
-<Callout type="tip">
-  Edit this file at `content/docs/getting-started.mdx` — saving it hot-reloads
-  in dev and re-validates against the schema in `content-collections.ts`.
-</Callout>
-
-## Install
-
-```bash
-pnpm install
-pnpm dev
+```
+pepa/
+├── apps/
+│   └── docs/
+│       ├── content/docs/      ← Your MDX files live here
+│       ├── app/               ← Next.js App Router pages and layouts
+│       ├── components/        ← Sidebar, TOC, MDX renderer, top tabs
+│       ├── lib/               ← nav.ts (builds the sidebar), vars.ts (text variables)
+│       ├── scripts/           ← CLI tools: search index, find-replace sweep, llms.txt
+│       ├── openapi/           ← Your OpenAPI spec (copied to public/ at build time)
+│       └── pepa.config.ts     ← Site name, enabled sections, feature flags
+│
+└── packages/
+    └── ui/
+        └── src/               ← Shared components: Callout, Tabs, Steps, Tiles, etc.
+            └── snippets/      ← Reusable content blocks (edit once, updates everywhere)
 ```
 
-## Why the schema matters
+The only folder you'll spend most of your time in is `content/docs/`. Everything
+else can stay as-is until you want to customize deeper.
 
-If you delete the `title` field above and save, the build fails immediately
-with a clear error pointing at this file — instead of shipping a docs page
-with a blank `<h1>` to production. That's the whole value of a typed content
-layer over parsing MDX by hand.
+---
+
+## Writing in MDX
+
+MDX is Markdown with superpowers. Everything you already know from Markdown works
+exactly the same — headings, bold, lists, code blocks, links. MDX just lets you
+drop in React components when you need richer content.
+
+<Accordion>
+  <AccordionItem title="What does an MDX file look like?" open>
+    ````mdx
+    ---
+    title: How to Authenticate
+    description: Add bearer token auth to your API requests.
+    type: how-to
+    section: docs
+    nav: How-to Guides
+    order: 1
+    ---
+
+    ## Get your API key
+
+    Go to your dashboard and copy your key.
+
+    <Callout type="warning">
+      Never commit your API key to version control.
+    </Callout>
+
+    ## Make your first request
+
+    ```bash
+    curl https://api.example.com/v1/widgets \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+    ````
+
+  </AccordionItem>
+  <AccordionItem title="Which components can I use?">
+    All components are globally available — no import statements needed. Just use
+    them directly:
+
+    | Component | What it's for |
+    |-----------|--------------|
+    | `<Callout type="tip">` | Tips, warnings, notes, danger alerts |
+    | `<Steps><Step title="...">` | Numbered step sequences |
+    | `<Tabs><Tab label="...">` | Multi-tab content (great for multi-language code) |
+    | `<Tiles><Tile title="...">` | Card grids for navigation or feature overviews |
+    | `<Accordion><AccordionItem title="...">` | Collapsible sections |
+    | `<Kbd>⌘K</Kbd>` | Keyboard shortcut styling |
+    | `<Var name="productName" />` | Text variables (edit in `lib/vars.ts`) |
+
+    See every component in action on the
+    [Feature Showcase](/contributors/feature-showcase) page.
+
+  </AccordionItem>
+  <AccordionItem title="What's the difference between all the `type` values?">
+    The `type` field follows the [Diátaxis](https://diataxis.fr) framework — a
+    way of thinking about what kind of content a page is:
+
+    - **tutorial** — Learning-oriented. Teaches by doing. ("Build your first X")
+    - **how-to** — Task-oriented. Solves a specific problem. ("How to do X")
+    - **reference** — Information-oriented. Facts and specs. ("The X field accepts…")
+    - **explanation** — Understanding-oriented. Answers "why". ("Why Pepa works this way")
+
+    You can also use `quickstart`, `cookbook`, `faq`, `glossary`, `changelog`,
+    or `migration` for special content types. The `type` value doesn't change
+    how the page renders — it's there to help you think clearly about what
+    you're writing.
+
+  </AccordionItem>
+</Accordion>
+
+---
+
+## Build and deploy
+
+When you're ready to publish:
+
+```bash
+pnpm build
+```
+
+This runs the full pipeline: validates all frontmatter, compiles MDX, generates
+the search index, and exports a static site into `apps/docs/out/`. Upload that
+folder to any static host.
+
+<Callout type="note">
+  If you're deploying to GitHub Pages at a path like
+  `https://you.github.io/my-docs/`, uncomment the `basePath` line in
+  `apps/docs/next.config.ts` and set it to `/my-docs`.
+</Callout>
+
+---
+
+## Why the schema is your friend
+
+Every MDX file is validated against a schema before the build runs. If you
+delete a required field or typo a value, the build fails immediately with a clear
+error pointing at the exact file — instead of silently shipping a broken page.
+
+Try it: delete the `title` field at the top of this file and save. Watch the
+terminal. Then add it back.
+
+<Callout type="tip">
+  **You're editing a live example.** This page is at
+  `apps/docs/content/docs/getting-started.mdx`. Saving any change here
+  hot-reloads in the browser and re-validates against the schema. It's a safe
+  place to experiment.
+</Callout>
+
+---
+
+## Where to go next
+
+<Tiles>
+  <Tile title="API Reference" iconName="Code" href="/api-reference">
+    Wire up your OpenAPI spec and get an auto-generated, interactive API
+    explorer.
+  </Tile>
+  <Tile title="Cookbook" iconName="ChefHat" href="/cookbook/overview">
+    Short, copy-pasteable recipes for common documentation patterns.
+  </Tile>
+  <Tile
+    title="Components & Symbols"
+    iconName="Layers"
+    href="/contributors/components-and-symbols"
+  >
+    Full reference for every component, snippet, and text variable available in
+    MDX.
+  </Tile>
+  <Tile
+    title="Feature Showcase"
+    iconName="Sparkles"
+    href="/contributors/feature-showcase"
+  >
+    A single page demoing every component side-by-side. Good for copy-pasting.
+  </Tile>
+</Tiles>
+
+---
+
+# Reference example
+
+example document
+
+## Example
+
+Example info

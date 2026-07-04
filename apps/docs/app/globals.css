@@ -295,9 +295,14 @@ details[open] > .sidebar-subgroup-label .sidebar-chevron {
 }
 
 .top-tabs {
+  border-bottom: 1px solid var(--border);
+}
+
+.top-tabs-inner {
   display: flex;
   gap: 1.5rem;
-  border-bottom: 1px solid var(--border);
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 0 1.5rem;
 }
 
