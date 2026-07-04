@@ -1,3 +1,7 @@
+# Only check external http/https links — internal root-relative links
+# (e.g. /getting-started) are already validated by `pnpm validate`.
+scheme = ["https", "http"]
+
 exclude = [
   "localhost",
   "127\\.0\\.0\\.1",
