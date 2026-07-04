@@ -9,16 +9,14 @@ on:
       - ".github/workflows/docs-deploy.yml"
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,27 +30,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: actions/configure-pages@v6
-        id: pages
-
       - name: Build static export
         run: pnpm --filter docs build
         env:
-          SITE_URL: ${{ steps.pages.outputs.base_url }}
+          SITE_URL: https://kapunahelewong.github.io/pepa
 
-      - uses: actions/upload-pages-artifact@v5
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: apps/docs/out
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v5
-        id: deployment
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: apps/docs/out
