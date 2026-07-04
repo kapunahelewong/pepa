@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
     unoptimized: true, // no image optimization API available on static hosts
   },
   basePath,
+  // Expose basePath to client components so they can prefix static asset URLs
+  // (e.g. /openapi/example-api.yaml → /pepa/openapi/example-api.yaml).
+  // Empty string locally; the subpath when deployed to a GitHub Pages subdirectory.
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath ?? "",
+  },
 };
 
 export default withContentCollections(nextConfig);
