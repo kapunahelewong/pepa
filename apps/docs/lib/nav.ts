@@ -41,14 +41,24 @@ export function buildNavTree(section = "docs"): NavGroup[] {
   const sortItems = (items: NavItem[]) =>
     items.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 
-  return Array.from(groupMap.entries()).map(([label, { items, subMap }]) => ({
-    label,
-    items: sortItems(items),
-    subgroups: Array.from(subMap.entries()).map(([sublabel, subitems]) => ({
-      label: sublabel,
-      items: sortItems(subitems),
-    })),
-  }));
+  return Array.from(groupMap.entries())
+    .sort(([a], [b]) => {
+      const ai = NAV_GROUP_ORDER.indexOf(a);
+      const bi = NAV_GROUP_ORDER.indexOf(b);
+      // Known groups sort by the canonical order; unknown groups go last
+      if (ai === -1 && bi === -1) return a.localeCompare(b);
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    })
+    .map(([label, { items, subMap }]) => ({
+      label,
+      items: sortItems(items),
+      subgroups: Array.from(subMap.entries()).map(([sublabel, subitems]) => ({
+        label: sublabel,
+        items: sortItems(subitems),
+      })),
+    }));
 }
 
 export function getDocBySlug(slug: string[]) {
